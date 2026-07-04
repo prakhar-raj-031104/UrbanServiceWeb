@@ -39,7 +39,8 @@ model Staff {
   id           String   @id @default(cuid())
   name         String
   phone        String
-  photoUrl     String?
+  gender       String?  // "Male" | "Female" | "Other"
+  photoUrl     String?  // external URL or base64 data-URL (uploaded from admin)
   bio          String?
   rating       Float    @default(4.8)
   jobsDone     Int      @default(0)

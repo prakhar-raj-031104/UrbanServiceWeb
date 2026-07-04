@@ -82,6 +82,62 @@ router.get('/staff', async (req, res, next) => {
   }
 });
 
+// POST /api/admin/staff — add a new staff member (photo can be a URL or base64 data-URL)
+router.post('/staff', async (req, res, next) => {
+  try {
+    const { name, phone, gender, photoUrl, bio, serviceIds } = req.body;
+    if (!name?.trim() || !phone?.trim()) return res.status(422).json({ error: 'Name and phone are required' });
+    if (!Array.isArray(serviceIds) || serviceIds.length === 0)
+      return res.status(422).json({ error: 'Select at least one service' });
+
+    const staff = await prisma.staff.create({
+      data: {
+        name: name.trim(),
+        phone: phone.trim(),
+        gender: gender || null,
+        photoUrl: photoUrl || null,
+        bio: bio?.trim() || null,
+        services: { connect: serviceIds.map((id) => ({ id })) },
+      },
+      include: { services: true },
+    });
+    res.status(201).json({ staff });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /api/admin/staff/:id — toggle availability / edit fields
+router.patch('/staff/:id', async (req, res, next) => {
+  try {
+    const { isAvailable, name, phone, gender, photoUrl, bio, serviceIds } = req.body;
+    const data = {};
+    if (typeof isAvailable === 'boolean') data.isAvailable = isAvailable;
+    if (name) data.name = name.trim();
+    if (phone) data.phone = phone.trim();
+    if (gender !== undefined) data.gender = gender || null;
+    if (photoUrl !== undefined) data.photoUrl = photoUrl || null;
+    if (bio !== undefined) data.bio = bio?.trim() || null;
+    if (Array.isArray(serviceIds)) data.services = { set: serviceIds.map((id) => ({ id })) };
+
+    const staff = await prisma.staff.update({ where: { id: req.params.id }, data, include: { services: true } });
+    res.json({ staff });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/admin/staff/:id — remove staff (detaches from past requests first)
+router.delete('/staff/:id', async (req, res, next) => {
+  try {
+    await prisma.serviceRequest.updateMany({ where: { staffId: req.params.id }, data: { staffId: null } });
+    await prisma.staff.delete({ where: { id: req.params.id } });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /api/admin/requests/:id/accept
 router.post('/requests/:id/accept', async (req, res, next) => {
   try {

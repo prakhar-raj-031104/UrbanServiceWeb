@@ -14,7 +14,7 @@ const app = express();
 
 app.use(helmet({ contentSecurityPolicy: false })); // CSP off: /wa page uses a tiny inline script
 app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') ?? '*' }));
-app.use(express.json());
+app.use(express.json({ limit: '3mb' })); // staff photos arrive as base64 data-URLs
 app.use(morgan('dev'));
 
 app.get('/api/health', (_req, res) =>
