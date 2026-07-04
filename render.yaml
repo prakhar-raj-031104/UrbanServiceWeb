@@ -1,0 +1,48 @@
+# Render Blueprint — deploys both services from this repo.
+# Database lives on Neon (set DATABASE_URL when Render prompts for it).
+
+services:
+  # ─── Backend API (Node + Express + Prisma) ───
+  - type: web
+    name: mshelphub-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install && npx prisma generate
+    # db push keeps the Neon schema in sync on every deploy (idempotent)
+    startCommand: npx prisma db push --skip-generate && node src/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL # paste your Neon connection string (ends with ?sslmode=require)
+        sync: false
+      - key: ADMIN_TOKEN # auto-generated strong token for the admin panel
+        generateValue: true
+      - key: WHATSAPP_PROVIDER
+        value: baileys
+      - key: WHATSAPP_TO
+        value: "919888991549"
+      - key: CORS_ORIGIN # set to your frontend URL, e.g. https://mshelphub.onrender.com
+        sync: false
+    # Uncomment on a paid plan to keep the WhatsApp session across deploys:
+    # disk:
+    #   name: wa-auth
+    #   mountPath: /opt/render/project/src/backend/.wa-auth
+    #   sizeGB: 1
+
+  # ─── Frontend (React static site) ───
+  - type: web
+    name: mshelphub
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL # set to your backend URL, e.g. https://mshelphub-api.onrender.com
+        sync: false
+    routes:
+      # SPA fallback so /services, /track, /admin work on refresh
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -1,0 +1,418 @@
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { api } from '../lib/api.js';
+import VideoHero from '../components/VideoHero.jsx';
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* Framer-style word reveal */
+function Split({ text }) {
+  return (
+    <span className="split">
+      {text.split(' ').map((w, i) => (
+        <span className="w" key={i}><span>{w}&nbsp;</span></span>
+      ))}
+    </span>
+  );
+}
+
+const CATEGORIES = [
+  { key: 'COOKING', title: 'Cooking', emoji: '🍳', desc: 'Daily meals, meal prep & party chefs — fresh food cooked in your kitchen by verified cooks.', img: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=900&q=80', from: 149 },
+  { key: 'WASHING', title: 'Washing', emoji: '🧺', desc: 'Laundry, wash-dry-fold and dishwashing — delicate care, same-day options, spotless results.', img: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80', from: 79 },
+  { key: 'CLEANING', title: 'Cleaning', emoji: '✨', desc: 'Deep home cleaning, bathrooms and kitchens — trained staff, hospital-grade sanitisation.', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80', from: 249 },
+];
+
+const STEPS = [
+  { n: '01', t: 'Pick a service', d: 'Browse cooking, washing & cleaning with live staff availability and transparent pricing.' },
+  { n: '02', t: 'Send a request', d: 'Share your address & preferred time. It reaches our team on WhatsApp and dashboard instantly.' },
+  { n: '03', t: 'Get matched', d: 'A verified professional is assigned — you see their name, photo, rating and phone number.' },
+  { n: '04', t: 'Track & pay fairly', d: 'Start & finish are timestamped. Your bill is computed from actual work time. No surprises.' },
+];
+
+const TESTIMONIALS = [
+  { q: 'The cook arrived within the hour and the tracking page told me exactly who was coming. Feels like a five-star service.', n: 'Ritika S.', r: 'Homemaker, Shimoga', a: 'https://i.pravatar.cc/100?img=32' },
+  { q: 'Transparent billing is the best part — I paid for exactly the time worked, and saw the timestamps myself.', n: 'Aman K.', r: 'Product Manager', a: 'https://i.pravatar.cc/100?img=13' },
+  { q: 'Booked a deep clean before Diwali. The professional was verified, punctual and the house looked brand new.', n: 'Neha & Raj', r: 'Vinobha Nagar, Shimoga', a: 'https://i.pravatar.cc/100?img=44' },
+];
+
+const MARQUEE = ['Home Cooking', 'Deep Cleaning', 'Laundry & Washing', 'Party Chefs', 'Bathroom Cleaning', 'Dishwashing', 'Meal Prep', 'Same-day Service'];
+
+export default function Landing() {
+  const nav = useNavigate();
+  const [services, setServices] = useState([]);
+  const [form, setForm] = useState({ serviceId: '', customerName: '', customerPhone: '', address: '' });
+  const [formState, setFormState] = useState({ sending: false, done: null, error: '' });
+  const root = useRef(null);
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    api.listServices().then((d) => setServices(d.services)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Hero word-reveal + entrance sequence
+      gsap.timeline({ defaults: { ease: 'power4.out' } })
+        .to('.hero .split .w > span', { y: 0, duration: 1.1, stagger: 0.06, delay: 0.15 })
+        .from('[data-hero-fade]', { y: 26, opacity: 0, duration: 0.9, stagger: 0.1 }, '-=0.7');
+
+      // Scroll reveals
+      gsap.utils.toArray('[data-reveal]').forEach((el) => {
+        gsap.from(el, { y: 48, opacity: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' } });
+      });
+      gsap.utils.toArray('[data-stagger]').forEach((group) => {
+        gsap.from(group.children, { y: 44, opacity: 0, duration: 0.85, ease: 'power3.out', stagger: 0.1,
+          scrollTrigger: { trigger: group, start: 'top 86%' } });
+      });
+      // Section headings word-reveal on scroll
+      gsap.utils.toArray('.split--scroll').forEach((el) => {
+        gsap.to(el.querySelectorAll('.w > span'), { y: 0, duration: 1, ease: 'power4.out', stagger: 0.05,
+          scrollTrigger: { trigger: el, start: 'top 88%' } });
+      });
+
+      // Showcase cards: slide in from the right, staggered, as the section enters
+      const cards = gsap.utils.toArray('.showcase__track > *');
+      if (cards.length) {
+        gsap.from(cards, {
+          x: 180, opacity: 0, duration: 1.2, ease: 'power4.out', stagger: 0.13,
+          scrollTrigger: { trigger: '#showcase', start: 'top 78%' },
+        });
+      }
+
+      // Stacking cards: as the next card arrives, the previous scales back & dims.
+      // Scrubbed 1:1 to scroll position — timing always matches the user's pace.
+      const stackCards = gsap.utils.toArray('.stack__card');
+      stackCards.forEach((card, i) => {
+        if (i === stackCards.length - 1) return;
+        gsap.to(card, {
+          scale: 0.93, opacity: 0.45, filter: 'blur(2px)', transformOrigin: 'center top', ease: 'none',
+          scrollTrigger: { trigger: stackCards[i + 1], start: 'top bottom-=120', end: 'top top+=260', scrub: 0.4 },
+        });
+      });
+
+      // Parallax on category images
+      gsap.utils.toArray('.catcard__img img').forEach((img) => {
+        gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: 'none',
+          scrollTrigger: { trigger: img.closest('.catcard'), start: 'top bottom', end: 'bottom top', scrub: true } });
+      });
+    }, root);
+    return () => ctx.revert();
+  }, [services.length]);
+
+  const submitQuick = async (e) => {
+    e.preventDefault();
+    setFormState({ sending: true, done: null, error: '' });
+    try {
+      const res = await api.createRequest({ ...form });
+      setFormState({ sending: false, done: res.request.code, error: '' });
+    } catch (err) {
+      setFormState({ sending: false, done: null, error: err.message });
+    }
+  };
+
+  return (
+    <main ref={root}>
+      {/* ─── HERO ─── */}
+      <VideoHero>
+        <div className="container hero__grid">
+          <div className="hero__copy">
+            <span className="hero__tag" data-hero-fade>Trusted home services · Shimoga</span>
+            <h1><Split text="Help for your home,"  /><br /><span className="accent-soft"><Split text="minutes away." /></span></h1>
+            <p className="hero__sub" data-hero-fade>
+              Cooking, washing and deep cleaning by verified professionals.
+              Book in minutes · track live · pay only for work done.
+            </p>
+            <div className="hero__cta" data-hero-fade>
+              <button className="btn btn-white" onClick={() => nav('/services')}>Book a service <span>→</span></button>
+              <button className="btn btn-outline" onClick={() => nav('/track')}>Track a request</button>
+            </div>
+            <div className="hero__stats" data-hero-fade>
+              <div><b>12k+</b><span>jobs done</span></div><i />
+              <div><b>4.9</b><span>avg rating</span></div><i />
+              <div><b>800+</b><span>verified pros</span></div><i />
+              <div><b>30 min</b><span>avg dispatch</span></div>
+            </div>
+          </div>
+
+          <div className="hero__panel" data-hero-fade>
+            <div className="quickpick">
+              <p className="quickpick__title">What do you need help with?</p>
+              <div className="quickpick__grid">
+                {CATEGORIES.map((c) => (
+                  <button key={c.key} className="quickpick__tile" onClick={() => nav('/services')}>
+                    <span className="quickpick__emoji">{c.emoji}</span>
+                    <span className="quickpick__name">{c.title}</span>
+                    <span className="quickpick__from">from ₹{c.from}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="quickpick__foot"><span className="dot on" /> 8 professionals online now</div>
+            </div>
+          </div>
+        </div>
+      </VideoHero>
+
+      {/* ─── MARQUEE ─── */}
+      <div className="marquee" aria-hidden>
+        <div className="marquee__track">
+          {[...MARQUEE, ...MARQUEE].map((m, i) => (
+            <span key={i}>{m} <em>✦</em></span>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── CATEGORIES (Urban Company style) ─── */}
+      <section className="section">
+        <div className="container">
+          <div className="sechead">
+            <div>
+              <span className="eyebrow">What we do</span>
+              <h2 className="section-title split--scroll"><Split text="Everyday services," /><br /><Split text="done properly." /></h2>
+            </div>
+            <p className="section-sub">Three things, done exceptionally well — with trained, background-checked professionals and honest time-based billing.</p>
+          </div>
+          <div className="catgrid" data-stagger>
+            {CATEGORIES.map((c, i) => (
+              <article className="catcard card card--hover" key={c.key} onClick={() => nav('/services')}>
+                <div className="catcard__img"><img src={c.img} alt={c.title} loading="lazy" /></div>
+                <div className="catcard__body">
+                  <div className="catcard__head">
+                    <span className="catcard__emoji">{c.emoji}</span>
+                    <span className="catcard__idx">0{i + 1}</span>
+                  </div>
+                  <h3>{c.title}</h3>
+                  <p>{c.desc}</p>
+                  <div className="catcard__foot">
+                    <span>from <b>₹{c.from}</b></span>
+                    <span className="catcard__arrow">→</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SHOWCASE (horizontal slider) ─── */}
+      <section id="showcase" className="showcase">
+        <div className="container showcase__head">
+          <div>
+            <span className="eyebrow">All services</span>
+            <h2 className="section-title split--scroll"><Split text="Pick yours." /></h2>
+          </div>
+          <div className="showcase__nav">
+            <button aria-label="Previous" onClick={() => trackRef.current?.scrollBy({ left: -430, behavior: 'smooth' })}>←</button>
+            <button aria-label="Next" onClick={() => trackRef.current?.scrollBy({ left: 430, behavior: 'smooth' })}>→</button>
+          </div>
+        </div>
+        <div className="showcase__viewport" ref={trackRef}>
+          <div className="showcase__track">
+            {services.map((s) => (
+              <article className="bigcard" key={s.id} onClick={() => nav('/services')}>
+                <div className="bigcard__img" style={{ backgroundImage: `url(${s.imageUrl})` }}>
+                  <span className={`bigcard__avail ${s.available ? 'ok' : 'no'}`}>
+                    <span className={`dot ${s.available ? 'on' : 'off'}`} />{s.availableStaffCount} available
+                  </span>
+                </div>
+                <div className="bigcard__body">
+                  <span className="bigcard__cat">{s.category}</span>
+                  <h3>{s.name}</h3>
+                  <p>{s.description}</p>
+                  <div className="bigcard__foot">
+                    <span><b>₹{s.hourlyRate}/hr</b> · min ₹{s.basePrice}</span>
+                    <span className="bigcard__go">Book →</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+            <div className="bigcard bigcard--cta" onClick={() => nav('/services')}>
+              <div className="bigcard--cta__inner">
+                <h3>See all<br />services</h3>
+                <button className="btn btn-white">Browse <span>→</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── HOW IT WORKS (editorial list) ─── */}
+      <section className="section howto">
+        <div className="container">
+          <div className="sechead">
+            <div>
+              <span className="eyebrow">How it works</span>
+              <h2 className="section-title split--scroll"><Split text="Request to done," /><br /><Split text="in four steps." /></h2>
+            </div>
+            <p className="section-sub">You always know who's coming, when they started, and exactly what it costs.</p>
+          </div>
+          <div className="stack">
+            {STEPS.map((s, i) => (
+              <div className="stack__card" key={s.n} style={{ top: `calc(15vh + ${i * 26}px)` }}>
+                <span className="stack__watermark">{s.n}</span>
+                <div className="stack__content">
+                  <span className="stack__n">Step {s.n}</span>
+                  <h3>{s.t}</h3>
+                  <p>{s.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SOCIAL PROOF (bento wall) ─── */}
+      <section className="section quotes">
+        <div className="container">
+          <div className="sechead">
+            <div>
+              <span className="eyebrow">Loved locally</span>
+              <h2 className="section-title split--scroll"><Split text="People trust us" /><br /><Split text="with their homes." /></h2>
+            </div>
+            <p className="section-sub">Real bookings, real timestamps, real reviews from homes across Shimoga.</p>
+          </div>
+
+          <div className="bento" data-stagger>
+            {/* featured quote */}
+            <figure className="bento__tile bento__quote bento__quote--big card card--hover">
+              <div className="quote__stars">★★★★★</div>
+              <blockquote>“{TESTIMONIALS[0].q}”</blockquote>
+              <figcaption>
+                <img src={TESTIMONIALS[0].a} alt={TESTIMONIALS[0].n} />
+                <div><b>{TESTIMONIALS[0].n}</b><span>{TESTIMONIALS[0].r}</span></div>
+              </figcaption>
+              <span className="bento__mark">”</span>
+            </figure>
+
+            {/* rating summary */}
+            <div className="bento__tile bento__rating card card--hover">
+              <b className="bento__big">4.9</b>
+              <div className="quote__stars">★★★★★</div>
+              <p>average rating across<br /><b>200+ Shimoga homes</b></p>
+              <div className="avatars">
+                {[32, 13, 44, 47, 12].map((n) => <img key={n} src={`https://i.pravatar.cc/60?img=${n}`} alt="" />)}
+              </div>
+            </div>
+
+            {/* photo tile */}
+            <div className="bento__tile bento__photo card card--hover">
+              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=700&q=80" alt="Deep cleaning" />
+              <div className="bento__photo-cap">
+                <span className="dot on" /> Deep clean · Vinobha Nagar · today
+              </div>
+            </div>
+
+            {/* quote 2 */}
+            <figure className="bento__tile bento__quote card card--hover">
+              <div className="quote__stars">★★★★★</div>
+              <blockquote>“{TESTIMONIALS[1].q}”</blockquote>
+              <figcaption>
+                <img src={TESTIMONIALS[1].a} alt={TESTIMONIALS[1].n} />
+                <div><b>{TESTIMONIALS[1].n}</b><span>{TESTIMONIALS[1].r}</span></div>
+              </figcaption>
+            </figure>
+
+            {/* stat tile (dark) */}
+            <div className="bento__tile bento__stat card">
+              <b className="bento__big">98%</b>
+              <p>of customers book<br />a second service</p>
+              <span className="bento__stat-glow" />
+            </div>
+
+            {/* chat-style tile */}
+            <div className="bento__tile bento__chat card card--hover">
+              <div className="bento__bubble bento__bubble--in">Need a kitchen deep clean tomorrow 10am 🙏</div>
+              <div className="bento__bubble bento__bubble--out">Booked ✓ Deepa (4.9★) is assigned — she'll arrive at 10:00 <span>✓✓</span></div>
+              <p className="bento__chat-cap">Avg. confirmation — under 30 min</p>
+            </div>
+
+            {/* quote 3 */}
+            <figure className="bento__tile bento__quote card card--hover">
+              <div className="quote__stars">★★★★★</div>
+              <blockquote>“{TESTIMONIALS[2].q}”</blockquote>
+              <figcaption>
+                <img src={TESTIMONIALS[2].a} alt={TESTIMONIALS[2].n} />
+                <div><b>{TESTIMONIALS[2].n}</b><span>{TESTIMONIALS[2].r}</span></div>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── GUARANTEES ─── */}
+      <section className="assure">
+        <div className="container">
+          <div className="assure__grid" data-stagger>
+            <div className="assure__item">
+              <span className="assure__icon">🛡️</span>
+              <h4>Verified & insured</h4>
+              <p>Every professional is ID-verified and background-checked before their first job.</p>
+            </div>
+            <div className="assure__item">
+              <span className="assure__icon">⏱️</span>
+              <h4>On-time promise</h4>
+              <p>Timestamped arrivals — if we're late beyond 30 minutes, your minimum charge is waived.</p>
+            </div>
+            <div className="assure__item">
+              <span className="assure__icon">💰</span>
+              <h4>Honest billing</h4>
+              <p>₹249/hr billed on actual work time with a ₹500 minimum. No hidden charges, ever.</p>
+            </div>
+            <div className="assure__item">
+              <span className="assure__icon">🔁</span>
+              <h4>Re-do guarantee</h4>
+              <p>Not happy with the finish? We'll send someone back within 24 hours, free.</p>
+            </div>
+          </div>
+        </div>
+        <div className="bigword" aria-hidden>
+          <div className="bigword__track">
+            <span>MS&nbsp;HELP&nbsp;HUB&nbsp;✦&nbsp;SHIMOGA&nbsp;✦&nbsp;MS&nbsp;HELP&nbsp;HUB&nbsp;✦&nbsp;SHIMOGA&nbsp;✦&nbsp;</span>
+            <span>MS&nbsp;HELP&nbsp;HUB&nbsp;✦&nbsp;SHIMOGA&nbsp;✦&nbsp;MS&nbsp;HELP&nbsp;HUB&nbsp;✦&nbsp;SHIMOGA&nbsp;✦&nbsp;</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BOOKING FORM (end of page, NovaWave style) ─── */}
+      <section className="section bookend" id="book">
+        <div className="container bookend__grid" data-reveal>
+          <div className="bookend__copy">
+            <span className="eyebrow eyebrow--light">Get started</span>
+            <h2>Let's get it<br />done today.</h2>
+            <p>Tell us what you need — our team is notified on WhatsApp the moment you hit send, and a verified professional gets assigned to you.</p>
+            <div className="bookend__meta">
+              <span>📞 +91 98889 91549</span>
+              <span>📍 Shimoga, Karnataka · 7 days · 8am–9pm</span>
+            </div>
+          </div>
+          <form className="bookend__form" onSubmit={submitQuick}>
+            {formState.done ? (
+              <div className="bookend__done">
+                <span>✓</span>
+                <h3>Request sent!</h3>
+                <p>Your code is <b>{formState.done}</b> — track it anytime.</p>
+                <button type="button" className="btn btn-white" onClick={() => nav('/track')}>Track request <span>→</span></button>
+              </div>
+            ) : (
+              <>
+                <select required value={form.serviceId} onChange={(e) => setForm({ ...form, serviceId: e.target.value })}>
+                  <option value="">Choose a service…</option>
+                  {services.map((s) => <option key={s.id} value={s.id}>{s.name} — from ₹{s.basePrice}</option>)}
+                </select>
+                <input required placeholder="Your name" value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} />
+                <input required placeholder="Phone (WhatsApp)" value={form.customerPhone} onChange={(e) => setForm({ ...form, customerPhone: e.target.value })} />
+                <input required placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                {formState.error && <div className="bookend__error">{formState.error}</div>}
+                <button className="btn btn-white bookend__submit" disabled={formState.sending}>
+                  {formState.sending ? 'Sending…' : <>Send request <span>→</span></>}
+                </button>
+              </>
+            )}
+          </form>
+        </div>
+      </section>
+    </main>
+  );
+}

@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Service catalogue ────────────────────────────────────────
+model Service {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    Category
+  description String
+  imageUrl    String?
+  basePrice   Float    // base call-out fee
+  hourlyRate  Float    // used to estimate cost from work duration
+  unit        String   @default("hour")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  staff    Staff[]          @relation("StaffServices")
+  requests ServiceRequest[]
+
+  @@index([category])
+}
+
+enum Category {
+  COOKING
+  WASHING
+  CLEANING
+  OTHER
+}
+
+// ─── Staff / service providers ───────────────────────────────
+model Staff {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String
+  photoUrl     String?
+  bio          String?
+  rating       Float    @default(4.8)
+  jobsDone     Int      @default(0)
+  isAvailable  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  services Service[]        @relation("StaffServices")
+  requests ServiceRequest[]
+
+  @@index([isAvailable])
+}
+
+// ─── Customer service requests (the core workflow) ───────────
+model ServiceRequest {
+  id            String        @id @default(cuid())
+  code          String        @unique // short human code e.g. UR-8F3A
+  status        RequestStatus @default(PENDING)
+
+  // customer
+  customerName  String
+  customerPhone String
+  address       String
+  notes         String?
+  scheduledFor  DateTime?
+
+  // linkage
+  service   Service @relation(fields: [serviceId], references: [id])
+  serviceId String
+  staff     Staff?  @relation(fields: [staffId], references: [id])
+  staffId   String?
+
+  // lifecycle timestamps
+  createdAt   DateTime  @default(now())
+  acceptedAt  DateTime?
+  assignedAt  DateTime?
+  startedAt   DateTime? // staff reached workplace -> work start
+  completedAt DateTime? // work finished
+
+  // billing
+  estimatedCost Float?
+  durationMins  Int?
+
+  events RequestEvent[]
+
+  @@index([status])
+}
+
+enum RequestStatus {
+  PENDING     // submitted by customer, waiting on admin
+  ACCEPTED    // admin accepted
+  ASSIGNED    // staff assigned + shared with customer
+  IN_PROGRESS // staff started work (timestamp marked)
+  COMPLETED   // work done, cost generated
+  CANCELLED
+}
+
+// ─── Audit trail / timeline for each request ─────────────────
+model RequestEvent {
+  id        String   @id @default(cuid())
+  request   ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  requestId String
+  type      String   // e.g. CREATED, ACCEPTED, ASSIGNED, STARTED, COMPLETED
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([requestId])
+}
