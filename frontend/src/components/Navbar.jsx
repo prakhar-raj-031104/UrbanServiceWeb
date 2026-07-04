@@ -26,7 +26,8 @@ export default function Navbar() {
     <header className={`nav ${scrolled ? 'nav--solid' : ''} ${dark ? 'nav--onhero' : ''} ${hidden ? 'nav--hidden' : ''}`}>
       <div className="container nav__inner">
         <Link to="/" className="nav__logo">
-          <span className="nav__mark">M</span>
+          <img src="/logo.png" alt="Ms Help Hub" className="nav__logoimg"
+               onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           <span>Ms Help&nbsp;<b>Hub</b></span>
         </Link>
         <nav className="nav__links">

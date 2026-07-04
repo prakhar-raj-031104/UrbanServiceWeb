@@ -6,9 +6,11 @@ export default function Footer() {
       <div className="container footer__inner">
         <div className="footer__brand">
           <div className="nav__logo" style={{ color: '#fff' }}>
-            <span className="nav__mark">M</span>
+            <img src="/logo.png" alt="Ms Help Hub" className="nav__logoimg nav__logoimg--footer"
+                 onError={(e) => { e.currentTarget.style.display = 'none'; }} />
             <span>Ms Help&nbsp;<b>Hub</b></span>
           </div>
+          <p className="footer__tagline">Here to Help, Every Step.</p>
           <p>Trusted cooking, washing & home-cleaning professionals, on demand. Book in minutes, track in real time.</p>
         </div>
         <div className="footer__col">
