@@ -34,7 +34,7 @@ const services = [
     name: 'Dishwashing & Utensils',
     category: 'WASHING',
     description: 'Reliable helpers for daily dish washing and kitchen cleanup — one-time or recurring.',
-    imageUrl: 'https://images.unsplash.com/photo-1581622558667-3f4f0e0e0e0e?w=800&q=80',
+    imageUrl: '/img/dishwashing.jpg',
     basePrice: 79,
     hourlyRate: 129,
   },
