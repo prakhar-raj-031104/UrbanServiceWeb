@@ -151,8 +151,8 @@
 .bigcard--cta__inner h3 { color: #fff; font-size: 28px; margin-bottom: 22px; line-height: 1.15; }
 
 /* ══════════════ HOW IT WORKS (stacking cards) ══════════════ */
-.howto--dark { background: linear-gradient(180deg, var(--ink) 0%, #121a3c 100%); position: relative; overflow: hidden; }
-.howto--dark::before { content: ''; position: absolute; top: 10%; right: -140px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(47,75,255,.28), transparent 65%); pointer-events: none; }
+.howto--dark { background: linear-gradient(180deg, var(--ink) 0%, #121a3c 100%); position: relative; }
+.howto--dark::before { content: ''; position: absolute; top: 8%; right: 0; width: 420px; height: 420px; background: radial-gradient(circle at 70% 40%, rgba(47,75,255,.26), transparent 62%); pointer-events: none; }
 .howto--dark .section-title { color: #fff; }
 .howto--dark .section-sub { color: rgba(255,255,255,.65); }
 .howto--dark .eyebrow { color: #aab8ff; }
