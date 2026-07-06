@@ -84,7 +84,7 @@ export default function Track() {
   return (
     <main className="page trackpage">
       {/* ── hero / search ── */}
-      <div className="page__hero trackpage__hero">
+      <div className="page__hero trackpage__hero page__hero--dark">
         <div className="container">
           <span className="eyebrow">Track Request</span>
           <h1 className="page__title">Where's my <span className="accent">service?</span></h1>

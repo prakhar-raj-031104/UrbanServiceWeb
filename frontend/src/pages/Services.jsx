@@ -63,7 +63,7 @@ export default function Services() {
 
   return (
     <main className="page">
-      <div className="page__hero">
+      <div className="page__hero page__hero--dark">
         <div className="container">
           <span className="eyebrow">Our Services</span>
           <div className="promobanner">🎉 First booking — 1 hour at just <b>₹149</b></div>

@@ -19,7 +19,7 @@
   --radius-sm: 12px;
   --shadow: 0 24px 60px -28px rgba(20, 26, 46, 0.22);
   --shadow-soft: 0 6px 24px -12px rgba(20, 26, 46, 0.10);
-  --font-head: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-head: 'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --maxw: 1240px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -29,7 +29,11 @@
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-body);
-  background: var(--bg);
+  background: #f6f7fc;
+  background-image:
+    radial-gradient(at 12% 0%, rgba(47,75,255,.055), transparent 46%),
+    radial-gradient(at 88% 18%, rgba(139,92,246,.05), transparent 42%);
+  background-attachment: fixed;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -53,8 +57,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn:hover span { transform: translateX(4px); }
 .btn-dark { background: var(--ink); color: #fff; }
 .btn-dark:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(10,14,26,.5); }
-.btn-blue { background: var(--blue); color: #fff; }
-.btn-blue:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(47,75,255,.6); }
+.btn-blue { background: linear-gradient(110deg, var(--blue), #6d28d9); color: #fff; box-shadow: 0 8px 22px -10px rgba(47,75,255,.55); }
+.btn-blue:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -10px rgba(47,75,255,.7); }
 .btn-ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
 .btn-ghost:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
 .btn-white { background: #fff; color: var(--ink); }
@@ -77,7 +81,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
   box-shadow: 0 1px 2px rgba(20,26,46,.04);
   transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s ease;
 }
-.card--hover:hover { transform: translateY(-4px); border-color: #cdd6ff; box-shadow: var(--shadow); }
+.card--hover:hover { transform: translateY(-5px) scale(1.005); border-color: #cdd6ff; box-shadow: var(--shadow); }
+/* image shine sweep on hover */
+.shine { position: relative; overflow: hidden; }
+.shine::after { content: ''; position: absolute; top: 0; bottom: 0; width: 60px; left: -100px; z-index: 2;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg);
+  transition: left .8s var(--ease); pointer-events: none; }
+.shine:hover::after { left: calc(100% + 60px); }
 
 /* ─── Sections ─── */
 .section { padding: 110px 0; }

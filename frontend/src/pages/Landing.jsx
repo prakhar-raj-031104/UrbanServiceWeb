@@ -214,7 +214,7 @@ export default function Landing() {
           </div>
           <div className="catgrid" data-stagger>
             {CATEGORIES.map((c, i) => (
-              <article className="catcard card card--hover" key={c.key} onClick={() => nav('/services')}>
+              <article className="catcard card card--hover shine" key={c.key} onClick={() => nav('/services')}>
                 <div className="catcard__img"><img src={c.img} alt={c.title} loading="lazy" /></div>
                 <div className="catcard__body">
                   <div className="catcard__head">
@@ -246,7 +246,7 @@ export default function Landing() {
         <div className="showcase__viewport">
           <div className="showcase__track" ref={trackRef}>
             {services.map((s) => (
-              <article className="bigcard" key={s.id} onClick={() => nav('/services')}>
+              <article className="bigcard shine" key={s.id} onClick={() => nav('/services')}>
                 <div className="bigcard__img" style={{ backgroundImage: `url(${s.imageUrl})` }}>
                   <span className={`bigcard__avail ${s.available ? 'ok' : 'no'}`}>
                     <span className={`dot ${s.available ? 'on' : 'off'}`} />{s.availableStaffCount} available
@@ -274,7 +274,7 @@ export default function Landing() {
       </section>
 
       {/* ─── HOW IT WORKS (editorial list) ─── */}
-      <section className="section howto">
+      <section className="section howto howto--dark">
         <div className="container">
           <div className="sechead">
             <div>

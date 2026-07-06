@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { useAuth } from '../lib/auth.jsx';
@@ -19,6 +20,8 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const [requests, setRequests] = useState(null);
   const nav = useNavigate();
+  const rootRef = useRef(null);
+  const animated = useRef(false);
 
   const load = () => api.auth.myRequests().then((d) => setRequests(d.requests)).catch(() => {});
 
@@ -30,27 +33,49 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, nav]);
 
+  // entrance: hero band + cards rise in once data arrives
+  useEffect(() => {
+    if (requests === null || animated.current || !rootRef.current) return;
+    animated.current = true;
+    const els = rootRef.current.querySelectorAll('.dashero, .dash__sectiontitle, .dashreq, .welcome > *');
+    gsap.fromTo(els, { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out', clearProps: 'transform' });
+  }, [requests]);
+
   if (!user) return null;
 
   const active = (requests || []).filter((r) => !['COMPLETED', 'CANCELLED'].includes(r.status));
   const history = (requests || []).filter((r) => ['COMPLETED', 'CANCELLED'].includes(r.status));
+  const completedCount = (requests || []).filter((r) => r.status === 'COMPLETED').length;
+  const totalSpent = (requests || []).reduce((n, r) => n + (r.estimatedCost || 0), 0);
+  const hour = new Date().getHours();
+  const daypart = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
     <main className="page dash">
-      <div className="container">
-        {/* profile head */}
-        <div className="dash__head">
-          <div className="dash__who">
-            <span className="dash__avatar">{user.name[0]?.toUpperCase()}</span>
-            <div>
-              <span className="eyebrow">My dashboard</span>
-              <h1>Hi, {user.name.split(' ')[0]} 👋</h1>
-              <p className="muted">{user.phone} · {user.address}</p>
+      <div className="container" ref={rootRef}>
+        {/* dark hero band */}
+        <div className="dashero">
+          <span className="dashero__orb dashero__orb--1" aria-hidden />
+          <span className="dashero__orb dashero__orb--2" aria-hidden />
+          <div className="dashero__top">
+            <div className="dash__who">
+              <span className="dash__avatar">{user.name[0]?.toUpperCase()}</span>
+              <div>
+                <span className="dashero__eyebrow">My dashboard</span>
+                <h1>{daypart}, {user.name.split(' ')[0]} 👋</h1>
+                <p className="dashero__meta">📞 {user.phone} &nbsp;·&nbsp; 📍 {user.address}</p>
+              </div>
+            </div>
+            <div className="dash__actions">
+              <Link to="/services" className="dashero__cta">+ Book a service</Link>
+              <button className="dashero__logout" onClick={() => { logout(); nav('/'); }}>Log out</button>
             </div>
           </div>
-          <div className="dash__actions">
-            <Link to="/services" className="btn btn-blue btn-sm">+ Book a service</Link>
-            <button className="btn btn-ghost btn-sm" onClick={() => { logout(); nav('/'); }}>Log out</button>
+          <div className="dashero__stats">
+            <div><b>{requests?.length ?? '—'}</b><span>total bookings</span></div>
+            <div><b>{active.length}</b><span>active now</span></div>
+            <div><b>{completedCount}</b><span>completed</span></div>
+            <div><b>₹{totalSpent}</b><span>total spent</span></div>
           </div>
         </div>
 
@@ -213,7 +238,9 @@ function RequestCard({ r, compact, onChanged }) {
   return (
     <div className={`card dashreq ${compact ? 'dashreq--compact' : ''}`}>
       <div className="dashreq__main">
-        <div className="dashreq__icon">{CAT_EMOJI[r.service.category] || '🛠️'}</div>
+        {r.service.imageUrl
+          ? <img className="dashreq__img" src={r.service.imageUrl} alt="" />
+          : <div className="dashreq__icon">{CAT_EMOJI[r.service.category] || '🛠️'}</div>}
         <div className="dashreq__info">
           <div className="dashreq__toprow">
             <h4>{r.service.name}</h4>
