@@ -66,8 +66,9 @@ export default function Services() {
       <div className="page__hero">
         <div className="container">
           <span className="eyebrow">Our Services</span>
+          <div className="promobanner">🎉 First booking — 1 hour at just <b>₹149</b></div>
           <h1 className="page__title">Find the right help<br />for your home</h1>
-          <p className="section-sub">Search services, check live staff availability and book in a couple of taps.</p>
+          <p className="section-sub">₹239/hr with a verified professional · jobs over 3 hours cost a flat ₹599 (one person).</p>
 
           <div className="searchbar card">
             <div className="searchbar__input">
@@ -110,7 +111,7 @@ export default function Services() {
                 <div className="svcshow__card-mobile">
                   <p>{s.description}</p>
                   <div className="svcshow__card-mrow">
-                    <b>₹{s.hourlyRate}/hr <small>· min ₹{s.basePrice}</small></b>
+                    <b>₹{s.hourlyRate}/hr <small>· 3 hrs+ ₹599</small></b>
                     <button className="btn btn-blue btn-sm" onClick={(e) => { e.stopPropagation(); setBooking(s); }}>Request →</button>
                   </div>
                 </div>
@@ -132,8 +133,8 @@ export default function Services() {
                 <p className="svcshow__desc">{current.description}</p>
 
                 <div className="svcshow__facts">
-                  <div><span>Minimum bill</span><b>₹{current.basePrice}</b></div>
                   <div><span>Per hour</span><b>₹{current.hourlyRate}</b></div>
+                  <div><span>3 hrs+ flat</span><b>₹599</b></div>
                   <div><span>Professionals</span><b>{current.availableStaffCount}/{current.staffCount}</b></div>
                 </div>
 

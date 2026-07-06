@@ -32,6 +32,12 @@ export const api = {
   createRequest: (payload) => req('/requests', { method: 'POST', body: payload, auth: true }),
   trackRequest: (code) => req(`/requests/${code}`),
 
+  // customer lifecycle + reviews
+  startRequest: (id) => req(`/requests/${id}/start`, { method: 'POST', auth: true }),
+  completeRequest: (id) => req(`/requests/${id}/complete`, { method: 'POST', auth: true }),
+  reviewRequest: (id, rating, review) => req(`/requests/${id}/review`, { method: 'POST', auth: true, body: { rating, review } }),
+  getReviews: () => req('/reviews'),
+
   // user auth + dashboard
   auth: {
     signup: (payload) => req('/auth/signup', { method: 'POST', body: payload }),

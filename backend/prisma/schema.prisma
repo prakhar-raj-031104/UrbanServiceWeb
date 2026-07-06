@@ -97,6 +97,11 @@ model ServiceRequest {
   estimatedCost Float?
   durationMins  Int?
 
+  // customer review (after completion)
+  rating     Int?
+  review     String?
+  reviewedAt DateTime?
+
   events RequestEvent[]
 
   @@index([status])

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { adminAuth } from '../middleware/adminAuth.js';
-import { estimateCost } from '../lib/cost.js';
+import { startWork, completeWork } from '../lib/workflow.js';
 import { bus } from '../lib/bus.js';
 
 const router = Router();
@@ -181,11 +181,9 @@ router.post('/requests/:id/assign', async (req, res, next) => {
 // POST /api/admin/requests/:id/start  — staff reached workplace; mark work start
 router.post('/requests/:id/start', async (req, res, next) => {
   try {
-    const request = await prisma.serviceRequest.update({
-      where: { id: req.params.id },
-      data: { status: 'IN_PROGRESS', startedAt: new Date() },
-    });
-    await logEvent(request.id, 'STARTED', `Work started at ${request.startedAt.toISOString()}`);
+    const existing = await prisma.serviceRequest.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Request not found' });
+    const request = await startWork(existing, 'admin');
     res.json({ request });
   } catch (err) {
     next(err);
@@ -201,23 +199,7 @@ router.post('/requests/:id/complete', async (req, res, next) => {
     });
     if (!existing) return res.status(404).json({ error: 'Request not found' });
     if (!existing.startedAt) return res.status(400).json({ error: 'Work has not been started yet' });
-
-    const completedAt = new Date();
-    const { cost, durationMins } = estimateCost(existing.service, existing.startedAt, completedAt);
-
-    const request = await prisma.serviceRequest.update({
-      where: { id: req.params.id },
-      data: { status: 'COMPLETED', completedAt, estimatedCost: cost, durationMins },
-    });
-
-    // free the staff member + bump their job count
-    if (existing.staffId) {
-      await prisma.staff.update({
-        where: { id: existing.staffId },
-        data: { isAvailable: true, jobsDone: { increment: 1 } },
-      });
-    }
-    await logEvent(request.id, 'COMPLETED', `Completed in ${durationMins} min · est. cost ₹${cost}`);
+    const request = await completeWork(existing, 'admin');
     res.json({ request });
   } catch (err) {
     next(err);

@@ -54,9 +54,23 @@ export default function Landing() {
     if (user) setForm((f) => ({ ...f, address: f.address || user.address }));
   }, [user]);
 
+  const [live, setLive] = useState({ reviews: [], average: null, count: 0 });
+
   useEffect(() => {
     api.listServices().then((d) => setServices(d.services)).catch(() => {});
+    api.getReviews().then(setLive).catch(() => {});
   }, []);
+
+  // real customer reviews replace the placeholders once they exist
+  const quotes = live.reviews.length
+    ? live.reviews.slice(0, 3).map((rv, i) => ({
+        q: rv.review || `Rated ${rv.rating}★ for ${rv.service.name} — great service!`,
+        n: rv.customerName,
+        r: `${rv.service.name} · Shimoga`,
+        a: `https://i.pravatar.cc/100?img=${(i * 17 + 11) % 70}`,
+        stars: rv.rating,
+      }))
+    : TESTIMONIALS.map((t) => ({ ...t, stars: 5 }));
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -132,10 +146,10 @@ export default function Landing() {
         <div className="container hero__grid">
           <div className="hero__copy">
             <span className="hero__tag" data-hero-fade>Trusted home services · Shimoga</span>
-            <h1><Split text="Help for your home,"  /><br /><span className="accent-soft"><Split text="minutes away." /></span></h1>
+            <h1><Split text="First booking · 1 hour" /><br /><span className="accent-soft"><Split text="at just ₹149." /></span></h1>
             <p className="hero__sub" data-hero-fade>
-              Cooking, washing and deep cleaning by verified professionals.
-              Book in minutes · track live · pay only for work done.
+              Verified professionals for cooking, washing & deep cleaning.
+              Then just ₹239/hr — and jobs over 3 hours cost a flat ₹599.
             </p>
             <div className="hero__cta" data-hero-fade>
               <button className="btn btn-white" onClick={() => nav('/services')}>Book a service <span>→</span></button>
@@ -157,7 +171,7 @@ export default function Landing() {
                   <button key={c.key} className="quickpick__tile" onClick={() => nav('/services')}>
                     <span className="quickpick__emoji">{c.emoji}</span>
                     <span className="quickpick__name">{c.title}</span>
-                    <span className="quickpick__from">from ₹{c.from}</span>
+                    <span className="quickpick__from">Book now →</span>
                   </button>
                 ))}
               </div>
@@ -198,7 +212,7 @@ export default function Landing() {
                   <h3>{c.title}</h3>
                   <p>{c.desc}</p>
                   <div className="catcard__foot">
-                    <span>from <b>₹{c.from}</b></span>
+                    <span>Verified & background-checked</span>
                     <span className="catcard__arrow">→</span>
                   </div>
                 </div>
@@ -234,7 +248,7 @@ export default function Landing() {
                   <h3>{s.name}</h3>
                   <p>{s.description}</p>
                   <div className="bigcard__foot">
-                    <span><b>₹{s.hourlyRate}/hr</b> · min ₹{s.basePrice}</span>
+                    <span><b>₹{s.hourlyRate}/hr</b> · 3 hrs+ flat ₹599</span>
                     <span className="bigcard__go">Book →</span>
                   </div>
                 </div>
@@ -289,20 +303,20 @@ export default function Landing() {
           <div className="bento" data-stagger>
             {/* featured quote */}
             <figure className="bento__tile bento__quote bento__quote--big card card--hover">
-              <div className="quote__stars">★★★★★</div>
-              <blockquote>“{TESTIMONIALS[0].q}”</blockquote>
+              <div className="quote__stars">{'★'.repeat(quotes[0].stars)}</div>
+              <blockquote>“{quotes[0].q}”</blockquote>
               <figcaption>
-                <img src={TESTIMONIALS[0].a} alt={TESTIMONIALS[0].n} />
-                <div><b>{TESTIMONIALS[0].n}</b><span>{TESTIMONIALS[0].r}</span></div>
+                <img src={quotes[0].a} alt={quotes[0].n} />
+                <div><b>{quotes[0].n}</b><span>{quotes[0].r}</span></div>
               </figcaption>
               <span className="bento__mark">”</span>
             </figure>
 
             {/* rating summary */}
             <div className="bento__tile bento__rating card card--hover">
-              <b className="bento__big">4.9</b>
+              <b className="bento__big">{live.average ?? 4.9}</b>
               <div className="quote__stars">★★★★★</div>
-              <p>average rating across<br /><b>200+ Shimoga homes</b></p>
+              <p>average rating across<br /><b>{live.count > 0 ? `${live.count} verified review${live.count === 1 ? '' : 's'}` : '200+ Shimoga homes'}</b></p>
               <div className="avatars">
                 {[32, 13, 44, 47, 12].map((n) => <img key={n} src={`https://i.pravatar.cc/60?img=${n}`} alt="" />)}
               </div>
@@ -318,11 +332,11 @@ export default function Landing() {
 
             {/* quote 2 */}
             <figure className="bento__tile bento__quote card card--hover">
-              <div className="quote__stars">★★★★★</div>
-              <blockquote>“{TESTIMONIALS[1].q}”</blockquote>
+              <div className="quote__stars">{'★'.repeat((quotes[1] || quotes[0]).stars)}</div>
+              <blockquote>“{(quotes[1] || quotes[0]).q}”</blockquote>
               <figcaption>
-                <img src={TESTIMONIALS[1].a} alt={TESTIMONIALS[1].n} />
-                <div><b>{TESTIMONIALS[1].n}</b><span>{TESTIMONIALS[1].r}</span></div>
+                <img src={(quotes[1] || quotes[0]).a} alt="" />
+                <div><b>{(quotes[1] || quotes[0]).n}</b><span>{(quotes[1] || quotes[0]).r}</span></div>
               </figcaption>
             </figure>
 
@@ -342,11 +356,11 @@ export default function Landing() {
 
             {/* quote 3 */}
             <figure className="bento__tile bento__quote card card--hover">
-              <div className="quote__stars">★★★★★</div>
-              <blockquote>“{TESTIMONIALS[2].q}”</blockquote>
+              <div className="quote__stars">{'★'.repeat((quotes[2] || quotes[0]).stars)}</div>
+              <blockquote>“{(quotes[2] || quotes[0]).q}”</blockquote>
               <figcaption>
-                <img src={TESTIMONIALS[2].a} alt={TESTIMONIALS[2].n} />
-                <div><b>{TESTIMONIALS[2].n}</b><span>{TESTIMONIALS[2].r}</span></div>
+                <img src={(quotes[2] || quotes[0]).a} alt="" />
+                <div><b>{(quotes[2] || quotes[0]).n}</b><span>{(quotes[2] || quotes[0]).r}</span></div>
               </figcaption>
             </figure>
           </div>

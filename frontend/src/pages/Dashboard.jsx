@@ -20,12 +20,14 @@ export default function Dashboard() {
   const [requests, setRequests] = useState(null);
   const nav = useNavigate();
 
+  const load = () => api.auth.myRequests().then((d) => setRequests(d.requests)).catch(() => {});
+
   useEffect(() => {
     if (!user) { nav('/auth?next=/dashboard'); return; }
-    const load = () => api.auth.myRequests().then((d) => setRequests(d.requests)).catch(() => {});
     load();
     const id = setInterval(load, 10000); // live: statuses update automatically
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, nav]);
 
   if (!user) return null;
@@ -65,7 +67,7 @@ export default function Dashboard() {
               </div>
             )}
             <div className="dash__list">
-              {active.map((r) => <RequestCard key={r.id} r={r} />)}
+              {active.map((r) => <RequestCard key={r.id} r={r} onChanged={load} />)}
             </div>
 
             {/* history */}
@@ -73,7 +75,7 @@ export default function Dashboard() {
               <>
                 <h3 className="dash__sectiontitle" style={{ marginTop: 46 }}>History</h3>
                 <div className="dash__list">
-                  {history.map((r) => <RequestCard key={r.id} r={r} compact />)}
+                  {history.map((r) => <RequestCard key={r.id} r={r} compact onChanged={load} />)}
                 </div>
               </>
             )}
@@ -84,10 +86,63 @@ export default function Dashboard() {
   );
 }
 
-function RequestCard({ r, compact }) {
+function Elapsed({ since }) {
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const secs = Math.max(0, Math.floor((Date.now() - new Date(since)) / 1000));
+  const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = secs % 60;
+  return <b>{h > 0 ? `${h}h ` : ''}{m}m {s}s</b>;
+}
+
+function StarPicker({ onSubmit, busy }) {
+  const [stars, setStars] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [text, setText] = useState('');
+  return (
+    <div className="reviewbox">
+      <p className="reviewbox__title">How was the service? Rate your professional:</p>
+      <div className="reviewbox__stars">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            className={(hover || stars) >= n ? 'on' : ''}
+            onMouseEnter={() => setHover(n)}
+            onMouseLeave={() => setHover(0)}
+            onClick={() => setStars(n)}
+          >★</button>
+        ))}
+      </div>
+      <input
+        placeholder="Say a few words (optional) — shown on our homepage"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        maxLength={300}
+      />
+      <button className="btn btn-blue btn-sm" disabled={!stars || busy} onClick={() => onSubmit(stars, text)}>
+        {busy ? 'Sending…' : 'Submit review →'}
+      </button>
+    </div>
+  );
+}
+
+function RequestCard({ r, compact, onChanged }) {
   const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
   const idx = STEPS.indexOf(r.status);
   const cancelled = r.status === 'CANCELLED';
+
+  const act = async (fn) => {
+    setBusy(true);
+    setErr('');
+    try { await fn(); onChanged?.(); }
+    catch (e) { setErr(e.message); }
+    finally { setBusy(false); }
+  };
 
   return (
     <div className={`card dashreq ${compact ? 'dashreq--compact' : ''}`}>
@@ -124,6 +179,39 @@ function RequestCard({ r, compact }) {
               <img src={r.staff.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.staff.name)}&background=e8ecff&color=2138e6`} alt={r.staff.name} />
               <span><b>{r.staff.name}</b> · {r.staff.rating}★</span>
               <a className="btn btn-ghost btn-sm" href={`tel:${r.staff.phone}`}>📞 Call</a>
+            </div>
+          )}
+
+          {/* customer start/stop controls */}
+          {r.status === 'ASSIGNED' && (
+            <div className="dashreq__act">
+              <button className="btn btn-blue" disabled={busy} onClick={() => act(() => api.startRequest(r.id))}>
+                ▶ Staff arrived — start work
+              </button>
+              <span className="muted">Tap when your professional reaches — the clock starts from here.</span>
+            </div>
+          )}
+          {r.status === 'IN_PROGRESS' && (
+            <div className="dashreq__act dashreq__act--running">
+              <div className="dashreq__timer">
+                <span className="dot on" /> Work in progress · <Elapsed since={r.startedAt} />
+              </div>
+              <button className="btn btn-dark" disabled={busy} onClick={() => act(() => api.completeRequest(r.id))}>
+                ✓ Work done — stop & get bill
+              </button>
+            </div>
+          )}
+          {err && <div className="form__error" style={{ marginTop: 10 }}>{err}</div>}
+
+          {/* review after completion */}
+          {r.status === 'COMPLETED' && !r.rating && (
+            <StarPicker busy={busy} onSubmit={(stars, text) => act(() => api.reviewRequest(r.id, stars, text))} />
+          )}
+          {r.rating && (
+            <div className="dashreq__rated">
+              <span className="quote__stars">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+              {r.review && <em>“{r.review}”</em>}
+              <span className="muted">Thanks for your review!</span>
             </div>
           )}
         </div>

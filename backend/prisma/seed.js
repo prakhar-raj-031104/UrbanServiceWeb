@@ -45,7 +45,7 @@ const services = [
     description: 'Top-to-bottom deep cleaning — floors, bathrooms, kitchen, dusting and sanitisation by trained staff.',
     imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80',
     basePrice: 500,
-    hourlyRate: 249,
+    hourlyRate: 239,
   },
   {
     slug: 'bathroom-cleaning',
@@ -54,7 +54,7 @@ const services = [
     description: 'Deep bathroom sanitisation — descaling, disinfecting and stain removal for a spotless finish.',
     imageUrl: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80',
     basePrice: 500,
-    hourlyRate: 249,
+    hourlyRate: 239,
   },
   {
     slug: 'sofa-carpet-cleaning',
@@ -63,7 +63,7 @@ const services = [
     description: 'Machine shampooing and stain extraction for sofas, carpets and mattresses — fresh, allergen-free fabric.',
     imageUrl: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=80',
     basePrice: 500,
-    hourlyRate: 249,
+    hourlyRate: 239,
   },
   {
     slug: 'kitchen-deep-clean',
@@ -72,7 +72,7 @@ const services = [
     description: 'Degreasing of chimney, stove, tiles and cabinets — a hygienic, sparkling kitchen ready for cooking.',
     imageUrl: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&q=80',
     basePrice: 500,
-    hourlyRate: 249,
+    hourlyRate: 239,
   },
   {
     slug: 'ironing-folding',
@@ -99,7 +99,7 @@ const services = [
     description: 'The complete package — every room, balcony and window. Ideal for move-ins, festivals and spring cleaning.',
     imageUrl: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=800&q=80',
     basePrice: 500,
-    hourlyRate: 249,
+    hourlyRate: 239,
   },
 ];
 

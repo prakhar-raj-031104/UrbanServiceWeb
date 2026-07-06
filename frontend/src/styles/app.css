@@ -620,6 +620,29 @@
 .dashreq__timeline p { font-size: 13.5px; color: var(--slate); margin: 2px 0; }
 .dashreq__timeline small { color: var(--muted); font-size: 11.5px; }
 
+/* promo banner + customer actions + reviews */
+.promobanner { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(120deg, var(--blue), #6d28d9); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 14.5px; font-weight: 600; margin: 16px 0 6px; box-shadow: 0 12px 30px -12px rgba(47,75,255,.5); animation: promopulse 3s ease-in-out infinite; }
+.promobanner b { font-family: var(--font-head); font-size: 16px; }
+@keyframes promopulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+
+.dashreq__act { margin-top: 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.dashreq__act .muted { font-size: 12.5px; max-width: 280px; }
+.dashreq__act--running { background: linear-gradient(120deg, #f0fdf6, #f4f6fb); border: 1px solid #d3f1e0; border-radius: 14px; padding: 14px 18px; justify-content: space-between; }
+.dashreq__timer { display: flex; align-items: center; gap: 8px; font-size: 14.5px; color: var(--ink-2); }
+.dashreq__timer b { font-family: var(--font-head); font-variant-numeric: tabular-nums; color: var(--green); font-size: 17px; }
+
+.reviewbox { margin-top: 16px; background: var(--bg); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.reviewbox__title { font-size: 13.5px; font-weight: 600; color: var(--slate); }
+.reviewbox__stars { display: flex; gap: 4px; }
+.reviewbox__stars button { background: none; font-size: 30px; color: #d8dcea; padding: 0 2px; transition: transform .2s var(--ease), color .15s; }
+.reviewbox__stars button:hover { transform: scale(1.2) rotate(-6deg); }
+.reviewbox__stars button.on { color: #fbbf24; }
+.reviewbox input { padding: 12px 14px; border-radius: 11px; border: 1px solid var(--line); font-size: 14px; font-family: inherit; outline: none; }
+.reviewbox input:focus { border-color: var(--blue); }
+.reviewbox .btn { align-self: flex-start; }
+.dashreq__rated { margin-top: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13.5px; }
+.dashreq__rated em { color: var(--slate); }
+
 /* navbar user chip */
 .nav__right { display: flex; align-items: center; gap: 10px; }
 .nav__user { display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border-radius: 999px; border: 1px solid var(--line); background: #fff; transition: box-shadow .3s; }

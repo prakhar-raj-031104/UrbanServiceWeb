@@ -4,6 +4,7 @@ import { prisma } from '../lib/prisma.js';
 import { notifyNewRequest } from '../services/whatsapp.js';
 import { bus } from '../lib/bus.js';
 import { userAuth } from '../middleware/userAuth.js';
+import { startWork, completeWork, logEvent } from '../lib/workflow.js';
 
 const router = Router();
 
@@ -63,6 +64,85 @@ router.post('/', userAuth, async (req, res, next) => {
     });
   } catch (err) {
     if (err instanceof z.ZodError) return res.status(422).json({ error: 'Validation', issues: err.issues });
+    next(err);
+  }
+});
+
+// ── customer lifecycle controls (dashboard buttons) ──
+async function ownRequest(req, res) {
+  const request = await prisma.serviceRequest.findUnique({
+    where: { id: req.params.id },
+    include: { service: true },
+  });
+  if (!request || request.userId !== req.user.id) {
+    res.status(404).json({ error: 'Request not found' });
+    return null;
+  }
+  return request;
+}
+
+// POST /api/requests/:id/start — customer marks "staff has arrived, work started"
+router.post('/:id/start', userAuth, async (req, res, next) => {
+  try {
+    const request = await ownRequest(req, res);
+    if (!request) return;
+    if (request.status !== 'ASSIGNED')
+      return res.status(400).json({ error: 'Work can start once a professional is assigned' });
+    const updated = await startWork(request, 'customer');
+    res.json({ request: updated });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/requests/:id/complete — customer marks the job done → bill generated
+router.post('/:id/complete', userAuth, async (req, res, next) => {
+  try {
+    const request = await ownRequest(req, res);
+    if (!request) return;
+    if (request.status !== 'IN_PROGRESS' || !request.startedAt)
+      return res.status(400).json({ error: 'Work has not been started yet' });
+    const updated = await completeWork(request, 'customer');
+    res.json({ request: updated });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/requests/:id/review — rate a completed job (1–5 + optional text).
+// Updates the assigned staff member's running average rating.
+router.post('/:id/review', userAuth, async (req, res, next) => {
+  try {
+    const request = await ownRequest(req, res);
+    if (!request) return;
+    if (request.status !== 'COMPLETED') return res.status(400).json({ error: 'You can review after completion' });
+    if (request.rating) return res.status(400).json({ error: 'Already reviewed — thank you!' });
+
+    const rating = Math.min(5, Math.max(1, parseInt(req.body.rating, 10) || 0));
+    if (!rating) return res.status(422).json({ error: 'Pick a rating from 1 to 5' });
+    const text = (req.body.review || '').trim().slice(0, 500) || null;
+
+    const updated = await prisma.serviceRequest.update({
+      where: { id: request.id },
+      data: { rating, review: text, reviewedAt: new Date() },
+    });
+
+    // refresh the staff member's average rating from all their reviews
+    if (request.staffId) {
+      const agg = await prisma.serviceRequest.aggregate({
+        where: { staffId: request.staffId, rating: { not: null } },
+        _avg: { rating: true },
+      });
+      if (agg._avg.rating) {
+        await prisma.staff.update({
+          where: { id: request.staffId },
+          data: { rating: Math.round(agg._avg.rating * 10) / 10 },
+        });
+      }
+    }
+    await logEvent(request.id, 'REVIEWED', `Customer rated ${rating}★${text ? ` — “${text}”` : ''}`);
+    res.json({ request: updated });
+  } catch (err) {
     next(err);
   }
 });
