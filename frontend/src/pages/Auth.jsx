@@ -22,8 +22,7 @@ export default function Auth() {
       gsap.timeline({ defaults: { ease: 'power4.out' } })
         .to('.authart__title .w > span', { y: 0, duration: 1, stagger: 0.08, delay: 0.1 })
         .from('.authart__shape', { scale: 0, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'back.out(1.6)' }, '-=0.7')
-        .from('.authart__card', { y: 40, opacity: 0, duration: 0.8, stagger: 0.1 }, '-=0.6')
-        .from('.authform > *', { y: 24, opacity: 0, duration: 0.7, stagger: 0.06 }, '-=0.7');
+        .from('.authart__card', { y: 40, opacity: 0, duration: 0.8, stagger: 0.1, clearProps: 'all' }, '-=0.6');
     }, root);
     return () => ctx.revert();
   }, []);
