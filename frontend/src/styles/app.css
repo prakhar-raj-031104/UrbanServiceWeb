@@ -1,22 +1,64 @@
-/* ══════════════ NAVBAR ══════════════ */
-.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 16px 0; transition: transform .5s var(--ease), background .3s ease, padding .3s ease; }
-.nav--hidden { transform: translateY(-110%); }
-.nav--solid { background: rgba(255,255,255,.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
-.nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.nav__logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 700; font-size: 20px; }
+/* ══════════════ NAVBAR (floating glass capsule) ══════════════ */
+.nav { position: fixed; top: 14px; left: 0; right: 0; z-index: 50; transition: transform .5s var(--ease), top .3s ease; }
+.nav--hidden { transform: translateY(-130%); }
+.nav__inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  background: rgba(255,255,255,.78); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(231,233,240,.9); border-radius: 999px;
+  padding: 10px 12px 10px 22px;
+  box-shadow: 0 12px 40px -18px rgba(20,26,46,.25);
+  transition: background .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.nav--onhero .nav__inner { background: rgba(12,16,34,.42); border-color: rgba(255,255,255,.14); box-shadow: 0 12px 40px -18px rgba(0,0,0,.5); }
+.nav--solid .nav__inner { box-shadow: 0 16px 44px -18px rgba(20,26,46,.32); }
+
+.nav__logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 700; font-size: 19px; }
 .nav__logo b { color: var(--blue); font-weight: 800; }
 .nav__mark { width: 34px; height: 34px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; }
-.nav__logoimg { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; background: #fff; padding: 2px; }
+.nav__logoimg { width: 38px; height: 38px; object-fit: contain; border-radius: 50%; background: #fff; padding: 2px; box-shadow: 0 2px 8px rgba(20,26,46,.12); }
 .nav__logoimg--footer { background: #fff; }
 .footer__tagline { color: #aab8ff; font-size: 14px; font-weight: 600; margin-top: 14px; font-style: italic; }
-.nav__links { display: flex; gap: 30px; font-weight: 500; font-size: 15px; }
-.nav__links a { color: var(--slate); transition: color .2s; }
-.nav__links a:hover, .nav__links a.active { color: var(--ink); }
-.nav--onhero .nav__links a { color: rgba(255,255,255,.8); }
-.nav--onhero .nav__links a:hover, .nav--onhero .nav__links a.active { color: #fff; }
+
+.nav__links { display: flex; gap: 6px; font-weight: 500; font-size: 14.5px; }
+.nav__links a { color: var(--slate); padding: 9px 16px; border-radius: 999px; position: relative; transition: color .25s, background .25s; }
+.nav__links a:hover { color: var(--ink); background: rgba(47,75,255,.07); }
+.nav__links a.active { color: var(--blue-600); background: var(--blue-100); font-weight: 600; }
+.nav--onhero .nav__links a { color: rgba(255,255,255,.75); }
+.nav--onhero .nav__links a:hover { color: #fff; background: rgba(255,255,255,.1); }
+.nav--onhero .nav__links a.active { color: #fff; background: rgba(255,255,255,.16); }
 .nav--onhero .nav__logo { color: #fff; }
-.nav--onhero .nav__logo b { color: #cdd6ff; }
-@media (max-width: 780px) { .nav__links { display: none; } }
+.nav--onhero .nav__logo b { color: #aab8ff; }
+
+/* login button — quiet, outlined, fills on hover */
+.nav__login {
+  padding: 10px 20px; border-radius: 999px; font-weight: 600; font-size: 14px;
+  background: transparent; color: var(--ink); border: 1.5px solid var(--line);
+  transition: all .35s var(--ease);
+}
+.nav__login:hover { background: var(--ink); border-color: var(--ink); color: #fff; transform: translateY(-1px); }
+.nav--onhero .nav__login { color: #fff; border-color: rgba(255,255,255,.35); }
+.nav--onhero .nav__login:hover { background: #fff; border-color: #fff; color: var(--ink); }
+
+/* book CTA — gradient capsule with shine sweep */
+.nav__cta {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: 999px; font-weight: 600; font-size: 14px;
+  background: linear-gradient(110deg, var(--blue), #6d28d9); color: #fff;
+  box-shadow: 0 8px 22px -8px rgba(47,75,255,.6);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.nav__cta span { transition: transform .35s var(--ease); }
+.nav__cta:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(47,75,255,.75); }
+.nav__cta:hover span { transform: translateX(4px); }
+.nav__cta::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 46px; left: -70px;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-20deg); transition: left .6s var(--ease);
+}
+.nav__cta:hover::after { left: 130%; }
+
+@media (max-width: 780px) { .nav__links { display: none; } .nav__inner { padding-left: 14px; } }
 
 /* ══════════════ HERO ══════════════ */
 .hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
@@ -608,7 +650,7 @@
 .dashreq__timeline small { color: var(--muted); font-size: 11.5px; }
 
 /* promo banner + customer actions + reviews */
-.promobanner { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(120deg, var(--blue), #6d28d9); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 14.5px; font-weight: 600; margin: 16px 0 6px; box-shadow: 0 12px 30px -12px rgba(47,75,255,.5); animation: promopulse 3s ease-in-out infinite; }
+.promobanner { display: flex; width: fit-content; align-items: center; gap: 8px; background: linear-gradient(120deg, var(--blue), #6d28d9); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 14.5px; font-weight: 600; margin: 16px 0 6px; box-shadow: 0 12px 30px -12px rgba(47,75,255,.5); animation: promopulse 3s ease-in-out infinite; }
 .promobanner b { font-family: var(--font-head); font-size: 16px; }
 @keyframes promopulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.025); } }
 

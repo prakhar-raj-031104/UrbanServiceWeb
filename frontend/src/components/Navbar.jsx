@@ -46,10 +46,10 @@ export default function Navbar() {
               <span className="nav__username">{user.name.split(' ')[0]}</span>
             </Link>
           ) : (
-            <button className="btn btn-ghost btn-sm" onClick={() => nav('/auth')}>Log in</button>
+            <button className="nav__login" onClick={() => nav('/auth')}>Log in</button>
           )}
-          <button className="btn btn-blue btn-sm" onClick={() => nav('/services')}>
-            Book a Service →
+          <button className="nav__cta" onClick={() => nav('/services')}>
+            Book a Service <span>→</span>
           </button>
         </div>
       </div>
