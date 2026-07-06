@@ -3,15 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useAuth } from '../lib/auth.jsx';
 
-const PERKS = [
-  { icon: '⚡', t: 'Two-tap booking', d: 'Your details are saved — never re-type them' },
-  { icon: '📍', t: 'Live tracking', d: 'Watch every request move, stage by stage' },
-  { icon: '🧾', t: 'Honest bills', d: 'Timestamped work, transparent pricing' },
-];
-
 export default function Auth() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [form, setForm] = useState({ name: '', phone: '', address: '', password: '' });
+  const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const { login, signup } = useAuth();
@@ -25,9 +20,9 @@ export default function Auth() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.timeline({ defaults: { ease: 'power4.out' } })
-        .from('.authpage__side > *', { y: 34, opacity: 0, duration: 0.9, stagger: 0.09 })
-        .from('.authpage__card', { y: 40, opacity: 0, scale: 0.97, duration: 0.9 }, '-=0.6')
-        .from('.authfloat', { scale: 0, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'back.out(1.7)' }, '-=0.5');
+        .from('.authform > *', { y: 26, opacity: 0, duration: 0.8, stagger: 0.07 })
+        .from('.authart__shape', { scale: 0, opacity: 0, duration: 0.9, stagger: 0.07, ease: 'back.out(1.6)' }, '-=0.6')
+        .from('.authart__title .w > span', { y: '112%', duration: 1, stagger: 0.07 }, '-=0.7');
     }, root);
     return () => ctx.revert();
   }, []);
@@ -51,114 +46,81 @@ export default function Auth() {
       nav(next);
     } catch (err) {
       setError(err.message);
-      gsap.fromTo('.authpage__card', { x: -7 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+      gsap.fromTo('.authform', { x: -8 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <main className="page authpage" ref={root}>
-      {/* animated background orbs */}
-      <span className="authorb authorb--1" aria-hidden />
-      <span className="authorb authorb--2" aria-hidden />
-      <span className="authorb authorb--3" aria-hidden />
+    <main className="authsplit" ref={root}>
+      {/* ── left: form ── */}
+      <section className="authsplit__form">
+        <form className="authform" onSubmit={submit}>
+          <img className="authform__logo" src="/logo.png" alt="Ms Help Hub"
+               onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <h1 className="authform__title">{mode === 'login' ? 'Login' : 'Sign up'}</h1>
 
-      <div className="container authpage__grid">
-        <div className="authpage__side">
-          <span className="eyebrow">Ms Help Hub · Shimoga</span>
-          <h1>
-            {mode === 'login' ? <>Welcome<br />back.</> : <>Your home,<br />handled.</>}
-          </h1>
-          <p>
-            One account for everything — book cooking, washing & cleaning in two taps,
-            see exactly who's coming, and track every request live. No codes to remember.
-          </p>
-
-          <div className="authpage__perklist">
-            {PERKS.map((p) => (
-              <div className="authperk" key={p.t}>
-                <span className="authperk__icon">{p.icon}</span>
-                <div>
-                  <b>{p.t}</b>
-                  <span>{p.d}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* floating service tiles */}
-          <div className="authpage__floats" aria-hidden>
-            <span className="authfloat" style={{ '--d': '0s' }}>🍳</span>
-            <span className="authfloat" style={{ '--d': '.8s' }}>🧺</span>
-            <span className="authfloat" style={{ '--d': '1.6s' }}>✨</span>
-          </div>
-        </div>
-
-        <form className="card authpage__card" onSubmit={submit}>
-          <div className="authpage__cardhead">
-            <img src="/logo.png" alt="" onError={(e) => (e.currentTarget.style.display = 'none')} />
-            <h3>{mode === 'login' ? 'Log in to your account' : 'Create your account'}</h3>
-            <p className="muted">{mode === 'login' ? 'Book & track in seconds' : 'Free forever · 30 seconds'}</p>
-          </div>
-
-          <div className={`authpage__tabs authpage__tabs--${mode}`}>
-            <span className="authpage__tabglider" aria-hidden />
-            <button type="button" className={mode === 'login' ? 'on' : ''} onClick={() => setMode('login')}>Log in</button>
-            <button type="button" className={mode === 'signup' ? 'on' : ''} onClick={() => setMode('signup')}>Sign up</button>
-          </div>
-
-          <div className="authpage__fields" ref={fieldsRef}>
+          <div className="authform__fields" ref={fieldsRef}>
             {mode === 'signup' && (
-              <label>
-                Full name
-                <div className="authinput">
-                  <span>👤</span>
-                  <input required value={form.name} onChange={set('name')} placeholder="Your name" />
-                </div>
-              </label>
+              <input className="authfield" required value={form.name} onChange={set('name')} placeholder="Full name" />
             )}
-            <label>
-              Mobile number
-              <div className="authinput">
-                <span>📱</span>
-                <input required value={form.phone} onChange={set('phone')} placeholder="10-digit number" inputMode="numeric" />
-              </div>
-            </label>
+            <input className="authfield" required value={form.phone} onChange={set('phone')} placeholder="Mobile number" inputMode="numeric" />
             {mode === 'signup' && (
-              <label>
-                Address
-                <div className="authinput">
-                  <span>📍</span>
-                  <input required value={form.address} onChange={set('address')} placeholder="Flat, street, area — Shimoga" />
-                </div>
-              </label>
+              <input className="authfield" required value={form.address} onChange={set('address')} placeholder="Address — area, Shimoga" />
             )}
-            <label>
-              Password
-              <div className="authinput">
-                <span>🔒</span>
-                <input required type="password" value={form.password} onChange={set('password')} placeholder={mode === 'signup' ? 'Min 6 characters' : 'Your password'} minLength={6} />
-              </div>
-            </label>
+            <div className="authfield authfield--pw">
+              <input
+                required
+                type={showPw ? 'text' : 'password'}
+                value={form.password}
+                onChange={set('password')}
+                placeholder="Password"
+                minLength={6}
+              />
+              <button type="button" onClick={() => setShowPw((v) => !v)} aria-label="Show password">
+                {showPw ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+
+          <div className="authform__row">
+            <span className="muted">{mode === 'signup' ? 'Free forever · takes 30 seconds' : 'Stay logged in for 30 days'}</span>
           </div>
 
           {error && <div className="form__error">{error}</div>}
 
-          <button className="btn authpage__submit" disabled={busy}>
-            {busy ? 'Please wait…' : mode === 'login' ? <>Log in <span>→</span></> : <>Create account <span>→</span></>}
+          <button className="authform__submit" disabled={busy}>
+            {busy ? 'Please wait…' : mode === 'login' ? 'Login' : 'Create account'}
           </button>
 
-          <p className="authpage__switch">
+          <p className="authform__switch">
             {mode === 'login' ? (
-              <>New here? <button type="button" className="link" onClick={() => setMode('signup')}>Create an account</button></>
+              <>Don't have an account? <button type="button" onClick={() => setMode('signup')}>Sign up</button></>
             ) : (
-              <>Already registered? <button type="button" className="link" onClick={() => setMode('login')}>Log in</button></>
+              <>Already have an account? <button type="button" onClick={() => setMode('login')}>Login</button></>
             )}
           </p>
-          <p className="authpage__secure">🛡️ Your details are encrypted & never shared</p>
         </form>
-      </div>
+      </section>
+
+      {/* ── right: brand art panel ── */}
+      <section className="authart" aria-hidden>
+        <span className="authart__shape authart__shape--halfblue" />
+        <span className="authart__shape authart__shape--circle" />
+        <span className="authart__shape authart__shape--tri" />
+        <span className="authart__shape authart__shape--halfnavy" />
+        <span className="authart__shape authart__shape--blob" />
+        <span className="authart__shape authart__shape--ring" />
+        <span className="authart__dots" />
+        <span className="authart__dots authart__dots--2" />
+
+        <h2 className="authart__title">
+          <span className="split"><span className="w"><span>Here&nbsp;to&nbsp;help,</span></span></span><br />
+          <span className="split authart__accent"><span className="w"><span>every&nbsp;step.</span></span></span>
+        </h2>
+        <p className="authart__sub">Verified professionals for your home — Shimoga</p>
+      </section>
     </main>
   );
 }
