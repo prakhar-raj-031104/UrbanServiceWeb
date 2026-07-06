@@ -338,14 +338,16 @@ export default function Landing() {
             </div>
 
             {/* quote 2 */}
+            {quotes[1] && (
             <figure className="bento__tile bento__quote card card--hover">
-              <div className="quote__stars">{'★'.repeat((quotes[1] || quotes[0]).stars)}</div>
-              <blockquote>“{(quotes[1] || quotes[0]).q}”</blockquote>
+              <div className="quote__stars">{'★'.repeat(quotes[1].stars)}</div>
+              <blockquote>“{quotes[1].q}”</blockquote>
               <figcaption>
-                <img src={(quotes[1] || quotes[0]).a} alt="" />
-                <div><b>{(quotes[1] || quotes[0]).n}</b><span>{(quotes[1] || quotes[0]).r}</span></div>
+                <img src={quotes[1].a} alt="" />
+                <div><b>{quotes[1].n}</b><span>{quotes[1].r}</span></div>
               </figcaption>
             </figure>
+            )}
 
             {/* stat tile (dark) */}
             <div className="bento__tile bento__stat card">
@@ -362,14 +364,16 @@ export default function Landing() {
             </div>
 
             {/* quote 3 */}
+            {quotes[2] && (
             <figure className="bento__tile bento__quote card card--hover">
-              <div className="quote__stars">{'★'.repeat((quotes[2] || quotes[0]).stars)}</div>
-              <blockquote>“{(quotes[2] || quotes[0]).q}”</blockquote>
+              <div className="quote__stars">{'★'.repeat(quotes[2].stars)}</div>
+              <blockquote>“{quotes[2].q}”</blockquote>
               <figcaption>
-                <img src={(quotes[2] || quotes[0]).a} alt="" />
-                <div><b>{(quotes[2] || quotes[0]).n}</b><span>{(quotes[2] || quotes[0]).r}</span></div>
+                <img src={quotes[2].a} alt="" />
+                <div><b>{quotes[2].n}</b><span>{quotes[2].r}</span></div>
               </figcaption>
             </figure>
+            )}
           </div>
         </div>
       </section>
@@ -391,7 +395,7 @@ export default function Landing() {
             <div className="assure__item">
               <span className="assure__icon">💰</span>
               <h4>Honest billing</h4>
-              <p>₹249/hr billed on actual work time with a ₹500 minimum. No hidden charges, ever.</p>
+              <p>₹239/hr billed on actual work time — over 3 hours it's a flat ₹599. No hidden charges, ever.</p>
             </div>
             <div className="assure__item">
               <span className="assure__icon">🔁</span>
