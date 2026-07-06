@@ -10,7 +10,7 @@ services:
     plan: free
     buildCommand: npm install && npx prisma generate
     # db push keeps the Neon schema in sync on every deploy (idempotent)
-    startCommand: npx prisma db push --skip-generate && node src/server.js
+    startCommand: npx prisma db push --skip-generate && node scripts/fixup.js && node src/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
@@ -18,6 +18,8 @@ services:
       - key: DATABASE_URL # paste your Neon connection string (ends with ?sslmode=require)
         sync: false
       - key: ADMIN_TOKEN # auto-generated strong token for the admin panel
+        generateValue: true
+      - key: JWT_SECRET
         generateValue: true
       - key: WHATSAPP_PROVIDER
         value: baileys

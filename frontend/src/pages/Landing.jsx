@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { api } from '../lib/api.js';
 import VideoHero from '../components/VideoHero.jsx';
+import { useAuth } from '../lib/auth.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,11 +42,17 @@ const MARQUEE = ['Home Cooking', 'Deep Cleaning', 'Laundry & Washing', 'Party Ch
 
 export default function Landing() {
   const nav = useNavigate();
+  const { user } = useAuth();
   const [services, setServices] = useState([]);
-  const [form, setForm] = useState({ serviceId: '', customerName: '', customerPhone: '', address: '' });
+  const [form, setForm] = useState({ serviceId: '', address: '', scheduledFor: '', notes: '' });
   const [formState, setFormState] = useState({ sending: false, done: null, error: '' });
   const root = useRef(null);
   const trackRef = useRef(null);
+
+  // prefill address once the user is known
+  useEffect(() => {
+    if (user) setForm((f) => ({ ...f, address: f.address || user.address }));
+  }, [user]);
 
   useEffect(() => {
     api.listServices().then((d) => setServices(d.services)).catch(() => {});
@@ -106,7 +113,12 @@ export default function Landing() {
     e.preventDefault();
     setFormState({ sending: true, done: null, error: '' });
     try {
-      const res = await api.createRequest({ ...form });
+      const res = await api.createRequest({
+        serviceId: form.serviceId,
+        address: form.address.trim() || undefined,
+        notes: form.notes.trim() || undefined,
+        scheduledFor: form.scheduledFor ? new Date(form.scheduledFor).toISOString() : undefined,
+      });
       setFormState({ sending: false, done: res.request.code, error: '' });
     } catch (err) {
       setFormState({ sending: false, done: null, error: err.message });
@@ -388,22 +400,30 @@ export default function Landing() {
             </div>
           </div>
           <form className="bookend__form" onSubmit={submitQuick}>
-            {formState.done ? (
+            {!user ? (
+              <div className="bookend__done">
+                <span>🔐</span>
+                <h3>Log in to book</h3>
+                <p>One free account — then every booking is two taps, tracked live in your dashboard.</p>
+                <button type="button" className="btn btn-white" onClick={() => nav('/auth')}>Log in / Sign up <span>→</span></button>
+              </div>
+            ) : formState.done ? (
               <div className="bookend__done">
                 <span>✓</span>
                 <h3>Request sent!</h3>
-                <p>Your code is <b>{formState.done}</b> — track it anytime.</p>
-                <button type="button" className="btn btn-white" onClick={() => nav('/track')}>Track request <span>→</span></button>
+                <p>Request <b>{formState.done}</b> is live in your dashboard.</p>
+                <button type="button" className="btn btn-white" onClick={() => nav('/dashboard')}>Open dashboard <span>→</span></button>
               </div>
             ) : (
               <>
+                <div className="bookend__userline">Booking as <b>{user.name}</b> · {user.phone}</div>
                 <select required value={form.serviceId} onChange={(e) => setForm({ ...form, serviceId: e.target.value })}>
                   <option value="">Choose a service…</option>
-                  {services.map((s) => <option key={s.id} value={s.id}>{s.name} — from ₹{s.basePrice}</option>)}
+                  {services.map((s) => <option key={s.id} value={s.id}>{s.name} — ₹{s.hourlyRate}/hr</option>)}
                 </select>
-                <input required placeholder="Your name" value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} />
-                <input required placeholder="Phone (WhatsApp)" value={form.customerPhone} onChange={(e) => setForm({ ...form, customerPhone: e.target.value })} />
                 <input required placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                <input type="datetime-local" value={form.scheduledFor} onChange={(e) => setForm({ ...form, scheduledFor: e.target.value })} />
+                <input placeholder="Notes (optional)" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
                 {formState.error && <div className="bookend__error">{formState.error}</div>}
                 <button className="btn btn-white bookend__submit" disabled={formState.sending}>
                   {formState.sending ? 'Sending…' : <>Send request <span>→</span></>}

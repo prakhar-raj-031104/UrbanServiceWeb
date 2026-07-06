@@ -4,9 +4,14 @@
 export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 const BASE = API_BASE;
 
-async function req(path, { method = 'GET', body, token } = {}) {
+function userToken() {
+  return localStorage.getItem('urban_token') || '';
+}
+
+async function req(path, { method = 'GET', body, token, auth } = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
+  else if (auth && userToken()) headers.Authorization = `Bearer ${userToken()}`;
   const res = await fetch(BASE + path, {
     method,
     headers,
@@ -24,8 +29,16 @@ export const api = {
     return req(`/services${qs ? `?${qs}` : ''}`);
   },
   getService: (slug) => req(`/services/${slug}`),
-  createRequest: (payload) => req('/requests', { method: 'POST', body: payload }),
+  createRequest: (payload) => req('/requests', { method: 'POST', body: payload, auth: true }),
   trackRequest: (code) => req(`/requests/${code}`),
+
+  // user auth + dashboard
+  auth: {
+    signup: (payload) => req('/auth/signup', { method: 'POST', body: payload }),
+    login: (phone, password) => req('/auth/login', { method: 'POST', body: { phone, password } }),
+    me: () => req('/auth/me', { auth: true }),
+    myRequests: () => req('/auth/me/requests', { auth: true }),
+  },
 
   // admin (token required)
   admin: {

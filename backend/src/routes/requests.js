@@ -3,25 +3,24 @@ import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { notifyNewRequest } from '../services/whatsapp.js';
 import { bus } from '../lib/bus.js';
+import { userAuth } from '../middleware/userAuth.js';
 
 const router = Router();
 
 const createSchema = z.object({
   serviceId: z.string().min(1),
-  customerName: z.string().min(2),
-  customerPhone: z.string().min(6),
-  address: z.string().min(4),
-  notes: z.string().optional(),
   scheduledFor: z.string().datetime().optional(),
+  notes: z.string().optional(),
+  address: z.string().optional(), // override; defaults to the profile address
 });
 
 function shortCode() {
   return 'UR-' + Math.random().toString(36).slice(2, 6).toUpperCase();
 }
 
-// POST /api/requests  — customer submits a service request.
-// Flow: save to DB -> create timeline event -> fire WhatsApp notification.
-router.post('/', async (req, res, next) => {
+// POST /api/requests — logged-in customers only.
+// Name/phone come from the account; address defaults to the saved one.
+router.post('/', userAuth, async (req, res, next) => {
   try {
     const data = createSchema.parse(req.body);
 
@@ -32,9 +31,10 @@ router.post('/', async (req, res, next) => {
       data: {
         code: shortCode(),
         serviceId: data.serviceId,
-        customerName: data.customerName,
-        customerPhone: data.customerPhone,
-        address: data.address,
+        userId: req.user.id,
+        customerName: req.user.name,
+        customerPhone: req.user.phone,
+        address: (data.address || req.user.address).trim(),
         notes: data.notes,
         scheduledFor: data.scheduledFor ? new Date(data.scheduledFor) : null,
         events: {
@@ -59,7 +59,7 @@ router.post('/', async (req, res, next) => {
 
     res.status(201).json({
       request: { id: request.id, code: request.code, status: request.status },
-      whatsapp: notify,
+      whatsapp: { ok: notify.ok },
     });
   } catch (err) {
     if (err instanceof z.ZodError) return res.status(422).json({ error: 'Validation', issues: err.issues });
@@ -67,7 +67,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// GET /api/requests/:code  — customer can track their request + assigned staff.
+// GET /api/requests/:code — public tracking by code (guest-friendly).
 router.get('/:code', async (req, res, next) => {
   try {
     const request = await prisma.serviceRequest.findUnique({

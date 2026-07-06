@@ -19,18 +19,25 @@ import Landing from './pages/Landing.jsx';
 import Services from './pages/Services.jsx';
 import Track from './pages/Track.jsx';
 import Admin from './pages/Admin.jsx';
+import Auth from './pages/Auth.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import { AuthProvider } from './lib/auth.jsx';
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/track" element={<Track />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
-      <Footer />
+      <AuthProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/track" element={<Track />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+        <Footer />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/auth.jsx';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { pathname } = useLocation();
   const nav = useNavigate();
-
-  const [hidden, setHidden] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -33,12 +34,24 @@ export default function Navbar() {
         <nav className="nav__links">
           <Link to="/" className={pathname === '/' ? 'active' : ''}>Home</Link>
           <Link to="/services" className={pathname === '/services' ? 'active' : ''}>Services</Link>
-          <Link to="/track" className={pathname === '/track' ? 'active' : ''}>Track</Link>
+          {user
+            ? <Link to="/dashboard" className={pathname === '/dashboard' ? 'active' : ''}>My Requests</Link>
+            : <Link to="/track" className={pathname === '/track' ? 'active' : ''}>Track</Link>}
           <Link to="/admin" className={pathname === '/admin' ? 'active' : ''}>Admin</Link>
         </nav>
-        <button className="btn btn-blue btn-sm" onClick={() => nav('/services')}>
-          Book a Service →
-        </button>
+        <div className="nav__right">
+          {user ? (
+            <Link to="/dashboard" className="nav__user" title="My dashboard">
+              <span className="nav__useravatar">{user.name[0]?.toUpperCase()}</span>
+              <span className="nav__username">{user.name.split(' ')[0]}</span>
+            </Link>
+          ) : (
+            <button className="btn btn-ghost btn-sm" onClick={() => nav('/auth')}>Log in</button>
+          )}
+          <button className="btn btn-blue btn-sm" onClick={() => nav('/services')}>
+            Book a Service →
+          </button>
+        </div>
       </div>
     </header>
   );
