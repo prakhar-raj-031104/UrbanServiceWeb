@@ -20,9 +20,10 @@ export default function Auth() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.timeline({ defaults: { ease: 'power4.out' } })
-        .from('.authform > *', { y: 26, opacity: 0, duration: 0.8, stagger: 0.07 })
-        .from('.authart__shape', { scale: 0, opacity: 0, duration: 0.9, stagger: 0.07, ease: 'back.out(1.6)' }, '-=0.6')
-        .from('.authart__title .w > span', { y: '112%', duration: 1, stagger: 0.07 }, '-=0.7');
+        .to('.authart__title .w > span', { y: 0, duration: 1, stagger: 0.08, delay: 0.1 })
+        .from('.authart__shape', { scale: 0, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'back.out(1.6)' }, '-=0.7')
+        .from('.authart__card', { y: 40, opacity: 0, duration: 0.8, stagger: 0.1 }, '-=0.6')
+        .from('.authform > *', { y: 24, opacity: 0, duration: 0.7, stagger: 0.06 }, '-=0.7');
     }, root);
     return () => ctx.revert();
   }, []);
@@ -54,7 +55,70 @@ export default function Auth() {
 
   return (
     <main className="authsplit" ref={root}>
-      {/* ── left: form ── */}
+      {/* ── left: brand art frame (filled) ── */}
+      <section className="authart" aria-hidden>
+        {/* backdrop shapes */}
+        <span className="authart__shape authart__shape--halfblue" />
+        <span className="authart__shape authart__shape--circle" />
+        <span className="authart__shape authart__shape--tri" />
+        <span className="authart__shape authart__shape--halfnavy" />
+        <span className="authart__shape authart__shape--blob" />
+        <span className="authart__shape authart__shape--ring" />
+        <span className="authart__dots" />
+        <span className="authart__dots authart__dots--2" />
+
+        <div className="authart__inner">
+          <span className="authart__eyebrow">Ms Help Hub · Shimoga</span>
+          <h2 className="authart__title">
+            <span className="split"><span className="w"><span>Here&nbsp;to&nbsp;help,</span></span></span><br />
+            <span className="split authart__accent"><span className="w"><span>every&nbsp;step.</span></span></span>
+          </h2>
+          <p className="authart__sub">
+            Book verified professionals for cooking, washing & deep cleaning —
+            tracked live, billed honestly.
+          </p>
+
+          {/* floating info cards */}
+          <div className="authart__cards">
+            <div className="authart__card authart__card--review">
+              <div className="authart__stars">★★★★★</div>
+              <p>“Punctual, professional and the house looked brand new.”</p>
+              <div className="authart__reviewer">
+                <img src="https://i.pravatar.cc/60?img=44" alt="" />
+                <span><b>Neha & Raj</b> · Vinobha Nagar</span>
+              </div>
+            </div>
+
+            <div className="authart__card authart__card--live">
+              <span className="dot on" />
+              <div>
+                <b>UR-8F3A · Deep Home Cleaning</b>
+                <span>In progress · Deepa (4.9★) on the job</span>
+              </div>
+            </div>
+
+            <div className="authart__card authart__card--stat">
+              <b>12k+</b>
+              <span>jobs completed<br />across Shimoga</span>
+            </div>
+
+            <div className="authart__card authart__card--offer">
+              🎉 <div><b>First booking · 1 hour</b><span>at just ₹149</span></div>
+            </div>
+          </div>
+
+          {/* service tags */}
+          <div className="authart__tags">
+            <span>🍳 Cooking</span>
+            <span>🧺 Washing</span>
+            <span>✨ Deep Cleaning</span>
+            <span>🧽 Bathrooms</span>
+            <span>🛋 Sofa & Carpet</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── right: form ── */}
       <section className="authsplit__form">
         <form className="authform" onSubmit={submit}>
           <img className="authform__logo" src="/logo.png" alt="Ms Help Hub"
@@ -101,25 +165,8 @@ export default function Auth() {
               <>Already have an account? <button type="button" onClick={() => setMode('login')}>Login</button></>
             )}
           </p>
+          <p className="authform__secure">🛡️ Encrypted & never shared</p>
         </form>
-      </section>
-
-      {/* ── right: brand art panel ── */}
-      <section className="authart" aria-hidden>
-        <span className="authart__shape authart__shape--halfblue" />
-        <span className="authart__shape authart__shape--circle" />
-        <span className="authart__shape authart__shape--tri" />
-        <span className="authart__shape authart__shape--halfnavy" />
-        <span className="authart__shape authart__shape--blob" />
-        <span className="authart__shape authart__shape--ring" />
-        <span className="authart__dots" />
-        <span className="authart__dots authart__dots--2" />
-
-        <h2 className="authart__title">
-          <span className="split"><span className="w"><span>Here&nbsp;to&nbsp;help,</span></span></span><br />
-          <span className="split authart__accent"><span className="w"><span>every&nbsp;step.</span></span></span>
-        </h2>
-        <p className="authart__sub">Verified professionals for your home — Shimoga</p>
       </section>
     </main>
   );
