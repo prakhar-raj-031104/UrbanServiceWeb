@@ -46,6 +46,7 @@ export default function Landing() {
   const [services, setServices] = useState([]);
   const [form, setForm] = useState({ serviceId: '', address: '', scheduledFor: '', notes: '' });
   const [formState, setFormState] = useState({ sending: false, done: null, error: '' });
+  const [agree, setAgree] = useState(false);
   const root = useRef(null);
   const trackRef = useRef(null);
 
@@ -446,8 +447,12 @@ export default function Landing() {
                 <input required placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
                 <input type="datetime-local" value={form.scheduledFor} onChange={(e) => setForm({ ...form, scheduledFor: e.target.value })} />
                 <input placeholder="Notes (optional)" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+                <label className="tickrow tickrow--dark">
+                  <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
+                  <span>I agree to the terms and conditions</span>
+                </label>
                 {formState.error && <div className="bookend__error">{formState.error}</div>}
-                <button className="btn btn-white bookend__submit" disabled={formState.sending}>
+                <button className="btn btn-white bookend__submit" disabled={formState.sending || !agree}>
                   {formState.sending ? 'Sending…' : <>Send request <span>→</span></>}
                 </button>
               </>

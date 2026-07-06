@@ -8,6 +8,7 @@ export default function RequestModal({ service, onClose }) {
   const nav = useNavigate();
   const { pathname } = useLocation();
   const [form, setForm] = useState({ address: user?.address || '', notes: '', scheduledFor: '' });
+  const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(null);
@@ -92,9 +93,14 @@ export default function RequestModal({ service, onClose }) {
                 </label>
               </div>
 
+              <label className="tickrow">
+                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
+                <span>I agree to the terms and conditions</span>
+              </label>
+
               {error && <div className="form__error">{error}</div>}
 
-              <button className="btn btn-blue" disabled={submitting}>
+              <button className="btn btn-blue" disabled={submitting || !agree}>
                 {submitting ? 'Sending…' : 'Send Request →'}
               </button>
               <p className="form__note">

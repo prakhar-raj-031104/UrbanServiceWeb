@@ -678,6 +678,14 @@
 .dashreq__timeline p { font-size: 13.5px; color: var(--slate); margin: 2px 0; }
 .dashreq__timeline small { color: var(--muted); font-size: 11.5px; }
 
+/* terms tick */
+.tickrow { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--slate); cursor: pointer; user-select: none; }
+.tickrow input { width: 17px; height: 17px; accent-color: var(--blue); cursor: pointer; flex-shrink: 0; }
+.tickrow span { line-height: 1.4; }
+.tickrow--center { justify-content: center; }
+.tickrow--dark { color: rgba(255,255,255,.78); }
+.tickrow--dark input { accent-color: #fff; }
+
 /* promo banner + customer actions + reviews */
 .promobanner { display: flex; width: fit-content; align-items: center; gap: 8px; background: linear-gradient(120deg, var(--blue), #6d28d9); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 14.5px; font-weight: 600; margin: 16px 0 6px; box-shadow: 0 12px 30px -12px rgba(47,75,255,.5); animation: promopulse 3s ease-in-out infinite; }
 .promobanner b { font-family: var(--font-head); font-size: 16px; }

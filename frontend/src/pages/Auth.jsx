@@ -7,6 +7,7 @@ export default function Auth() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [form, setForm] = useState({ name: '', phone: '', address: '', password: '' });
   const [showPw, setShowPw] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const { login, signup } = useAuth();
@@ -32,6 +33,7 @@ export default function Auth() {
     if (!fieldsRef.current) return;
     gsap.fromTo(fieldsRef.current.children, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.06, ease: 'power3.out' });
     setError('');
+    setAgree(false);
   }, [mode]);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -151,9 +153,16 @@ export default function Auth() {
             <span className="muted">{mode === 'signup' ? 'Free forever · takes 30 seconds' : 'Stay logged in for 30 days'}</span>
           </div>
 
+          {mode === 'signup' && (
+            <label className="tickrow tickrow--center">
+              <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
+              <span>I agree to the terms and conditions</span>
+            </label>
+          )}
+
           {error && <div className="form__error">{error}</div>}
 
-          <button className="authform__submit" disabled={busy}>
+          <button className="authform__submit" disabled={busy || (mode === 'signup' && !agree)}>
             {busy ? 'Please wait…' : mode === 'login' ? 'Login' : 'Create account'}
           </button>
 
