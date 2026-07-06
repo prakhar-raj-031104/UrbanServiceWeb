@@ -20,9 +20,9 @@ function Split({ text }) {
 }
 
 const CATEGORIES = [
-  { key: 'COOKING', title: 'Cooking', emoji: '🍳', desc: 'Daily meals, meal prep & party chefs — fresh food cooked in your kitchen by verified cooks.', img: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=900&q=80', from: 149 },
-  { key: 'WASHING', title: 'Washing', emoji: '🧺', desc: 'Laundry, wash-dry-fold and dishwashing — delicate care, same-day options, spotless results.', img: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80', from: 79 },
-  { key: 'CLEANING', title: 'Cleaning', emoji: '✨', desc: 'Deep home cleaning, bathrooms and kitchens — trained staff, hospital-grade sanitisation.', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80', from: 249 },
+  { key: 'CLEANING', title: 'Home Cleaning', emoji: '✨', tags: 'DEEP · BATHROOM · MOVE-IN', price: '₹239/hr', desc: 'Room-by-room deep care by trained specialists. Hospital-grade sanitisation, same professional every visit.', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80' },
+  { key: 'COOKING', title: 'Home Cooking', emoji: '🍳', tags: 'MEAL PREP · DAILY · PARTY CHEF', price: 'from ₹249/hr', desc: 'A verified cook plans and cooks the meals your family actually wants — fresh, in your own kitchen.', img: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=900&q=80' },
+  { key: 'WASHING', title: 'Fresh Laundry', emoji: '🧺', tags: 'WASH · IRON · FOLD', price: 'from ₹119/hr', desc: 'Picked up, pressed like a hotel, folded like home. Dishwashing and wardrobe care included.', img: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80' },
 ];
 
 const STEPS = [
@@ -214,20 +214,18 @@ export default function Landing() {
           </div>
           <div className="catgrid" data-stagger>
             {CATEGORIES.map((c, i) => (
-              <article className="catcard card card--hover shine" key={c.key} onClick={() => nav('/services')}>
-                <div className="catcard__img"><img src={c.img} alt={c.title} loading="lazy" /></div>
-                <div className="catcard__body">
-                  <div className="catcard__head">
-                    <span className="catcard__emoji">{c.emoji}</span>
-                    <span className="catcard__idx">0{i + 1}</span>
-                  </div>
-                  <h3>{c.title}</h3>
-                  <p>{c.desc}</p>
-                  <div className="catcard__foot">
-                    <span>Verified & background-checked</span>
-                    <span className="catcard__arrow">→</span>
-                  </div>
+              <article className="catcard" key={c.key} onClick={() => nav('/services')}>
+                <div className="catcard__img shine">
+                  <span className="catcard__num">0{i + 1}</span>
+                  <img src={c.img} alt={c.title} loading="lazy" />
                 </div>
+                <div className="catcard__row">
+                  <h3>{c.title}</h3>
+                  <span className="catcard__price">{c.price}</span>
+                </div>
+                <p className="catcard__tags">{c.tags}</p>
+                <p className="catcard__desc">{c.desc}</p>
+                <span className="catcard__explore">Explore <i>↗</i></span>
               </article>
             ))}
           </div>
