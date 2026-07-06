@@ -56,8 +56,11 @@ export default function Dashboard() {
 
         {requests === null && <div className="empty">Loading your requests…</div>}
 
+        {/* brand-new user: rich welcome instead of an empty page */}
+        {requests !== null && requests.length === 0 && <WelcomeBoard name={user.name.split(' ')[0]} />}
+
         {/* active requests */}
-        {requests !== null && (
+        {requests !== null && requests.length > 0 && (
           <>
             <h3 className="dash__sectiontitle">Active requests {active.length > 0 && <em>· updates live</em>}</h3>
             {active.length === 0 && (
@@ -83,6 +86,69 @@ export default function Dashboard() {
         )}
       </div>
     </main>
+  );
+}
+
+// First-visit welcome board — shown until the user makes their first request.
+function WelcomeBoard({ name }) {
+  const nav = useNavigate();
+  const cats = [
+    { emoji: '✨', t: 'Deep Cleaning', d: 'Homes, bathrooms & kitchens — hospital-grade sanitisation by trained staff.' },
+    { emoji: '🍳', t: 'Cooking', d: 'Daily meals, tiffin prep and party chefs cooking fresh in your kitchen.' },
+    { emoji: '🧺', t: 'Washing', d: 'Laundry, ironing and dishwashing — delicate care, spotless results.' },
+  ];
+  const steps = [
+    { i: '📨', t: 'Request', d: 'Pick a service, choose a date, add a note' },
+    { i: '🧑‍🔧', t: 'Get matched', d: 'A verified professional is assigned to you' },
+    { i: '⏱️', t: 'Track & pay', d: 'Start/finish timestamped — pay for real work time' },
+  ];
+
+  return (
+    <div className="welcome">
+      {/* greeting banner */}
+      <div className="welcome__hero card">
+        <div className="welcome__hero-copy">
+          <span className="welcome__wave">🎉</span>
+          <h2>Welcome to Ms Help Hub, {name}!</h2>
+          <p>
+            Your account is ready. This is your dashboard — every service you request
+            appears here with live status, your assigned professional and the bill.
+            Need a hand at home? Make your first request now.
+          </p>
+          <div className="welcome__cta">
+            <button className="btn btn-blue" onClick={() => nav('/services')}>Make your first request <span>→</span></button>
+            <span className="welcome__offer">🎁 First booking · 1 hour at just <b>₹149</b></span>
+          </div>
+        </div>
+      </div>
+
+      {/* service cards */}
+      <h3 className="dash__sectiontitle">What do you need help with?</h3>
+      <div className="welcome__cats">
+        {cats.map((c) => (
+          <button key={c.t} className="card card--hover welcome__cat" onClick={() => nav('/services')}>
+            <span className="welcome__cat-emoji">{c.emoji}</span>
+            <h4>{c.t}</h4>
+            <p>{c.d}</p>
+            <span className="welcome__cat-go">Book now →</span>
+          </button>
+        ))}
+      </div>
+
+      {/* how it works strip */}
+      <div className="welcome__steps card">
+        {steps.map((st, i) => (
+          <div className="welcome__step" key={st.t}>
+            <span className="welcome__step-icon">{st.i}</span>
+            <div>
+              <b>{i + 1}. {st.t}</b>
+              <p>{st.d}</p>
+            </div>
+            {i < steps.length - 1 && <span className="welcome__step-arrow">→</span>}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
