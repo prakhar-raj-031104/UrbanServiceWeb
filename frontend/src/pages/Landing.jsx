@@ -20,9 +20,9 @@ function Split({ text }) {
 }
 
 const CATEGORIES = [
-  { key: 'CLEANING', title: 'Home Cleaning', emoji: '✨', tags: 'DEEP · BATHROOM · MOVE-IN', price: '₹239/hr', desc: 'Room-by-room deep care by trained specialists. Hospital-grade sanitisation, same professional every visit.', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80' },
-  { key: 'COOKING', title: 'Home Cooking', emoji: '🍳', tags: 'MEAL PREP · DAILY · PARTY CHEF', price: 'from ₹249/hr', desc: 'A verified cook plans and cooks the meals your family actually wants — fresh, in your own kitchen.', img: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=900&q=80' },
-  { key: 'WASHING', title: 'Fresh Laundry', emoji: '🧺', tags: 'WASH · IRON · FOLD', price: 'from ₹119/hr', desc: 'Picked up, pressed like a hotel, folded like home. Dishwashing and wardrobe care included.', img: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80' },
+  { key: 'CLEANING', title: 'Home Cleaning', emoji: '✨', tags: 'DEEP · BATHROOM · MOVE-IN', price: '₹239/hr', desc: 'Room-by-room deep care by trained specialists. Hospital-grade sanitisation, same professional every visit.', img: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=900&q=80' },
+  { key: 'COOKING', title: 'Home Cooking', emoji: '🍳', tags: 'MEAL PREP · DAILY · PARTY CHEF', price: 'from ₹249/hr', desc: 'A verified cook plans and cooks the meals your family actually wants — fresh, in your own kitchen.', img: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=900&q=80' },
+  { key: 'WASHING', title: 'Fresh Laundry', emoji: '🧺', tags: 'WASH · IRON · FOLD', price: 'from ₹119/hr', desc: 'Picked up, pressed like a hotel, folded like home. Dishwashing and wardrobe care included.', img: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=900&q=80' },
 ];
 
 const STEPS = [
