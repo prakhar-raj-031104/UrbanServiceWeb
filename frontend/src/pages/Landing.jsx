@@ -126,6 +126,14 @@ export default function Landing() {
         });
       });
 
+      // Guarantee cards drift at different speeds while scrolling (parallax)
+      gsap.utils.toArray('.assure__item').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: i % 2 ? 70 : 10 },
+          { y: i % 2 ? -30 : 10, ease: 'none',
+            scrollTrigger: { trigger: '.assure', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+      });
+
       // Parallax on category images
       gsap.utils.toArray('.catcard__img img').forEach((img) => {
         gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: 'none',
