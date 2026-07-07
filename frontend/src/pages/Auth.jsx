@@ -104,7 +104,7 @@ export default function Auth() {
             </div>
 
             <div className="authart__card authart__card--offer">
-              🎉 <div><b>First booking · 1 hour</b><span>at just ₹149</span></div>
+              🎉 <div><b>First booking · 1 hour</b><span>at just ₹199</span></div>
             </div>
           </div>
 

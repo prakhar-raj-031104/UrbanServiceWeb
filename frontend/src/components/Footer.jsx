@@ -28,8 +28,9 @@ export default function Footer() {
         <div className="footer__col">
           <h4>Contact</h4>
           <span>hello@mshelphub.in</span>
-          <span>+91 98889 91549</span>
-          <span>Shimoga, Karnataka</span>
+          <span>+91 80954 66795</span>
+          <span>+91 96066 07818</span>
+          <span>Kushinagar Prabhas Apartment, opposite Shimoga 577201</span>
           <span>Open 7 days · 8am–9pm</span>
         </div>
       </div>

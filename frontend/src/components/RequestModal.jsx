@@ -70,7 +70,7 @@ export default function RequestModal({ service, onClose }) {
             <span className="pill">{service.category}</span>
             <h2 className="modal__title">Request · {service.name}</h2>
             <p className="muted modal__price">
-              ₹{service.hourlyRate}/hr · 3 hrs+ flat ₹599 · first booking: 1st hour ₹149
+              ₹{service.hourlyRate}/hr · 3 hrs+ flat ₹599 · first booking: 1st hour ₹199
             </p>
 
             <div className="modal__userline">

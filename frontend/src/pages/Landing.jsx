@@ -166,7 +166,7 @@ export default function Landing() {
         <div className="container hero__grid">
           <div className="hero__copy">
             <span className="hero__tag" data-hero-fade>Trusted home services · Shimoga</span>
-            <h1><Split text="First booking · 1 hour" /><br /><span className="accent-soft"><Split text="at just ₹149." /></span></h1>
+            <h1><Split text="First booking · 1 hour" /><br /><span className="accent-soft"><Split text="at just ₹199." /></span></h1>
             <p className="hero__sub" data-hero-fade>
               Verified professionals for cooking, washing & deep cleaning.
               Then just ₹239/hr — and jobs over 3 hours cost a flat ₹599.
@@ -179,7 +179,7 @@ export default function Landing() {
               <div><b>12k+</b><span>jobs done</span></div><i />
               <div><b>4.9</b><span>avg rating</span></div><i />
               <div><b>800+</b><span>verified pros</span></div><i />
-              <div><b>30 min</b><span>avg dispatch</span></div>
+              <div><b>30 min</b><span>service time</span></div>
             </div>
           </div>
 
@@ -428,8 +428,8 @@ export default function Landing() {
             <h2>Let's get it<br />done today.</h2>
             <p>Tell us what you need — our team is notified on WhatsApp the moment you hit send, and a verified professional gets assigned to you.</p>
             <div className="bookend__meta">
-              <span>📞 +91 98889 91549</span>
-              <span>📍 Shimoga, Karnataka · 7 days · 8am–9pm</span>
+              <span>📞 +91 80954 66795 · +91 96066 07818</span>
+              <span>📍 Kushinagar Prabhas Apartment, opposite Shimoga 577201</span>
             </div>
           </div>
           <form className="bookend__form" onSubmit={submitQuick}>

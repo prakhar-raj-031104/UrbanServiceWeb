@@ -93,6 +93,15 @@ const services = [
     hourlyRate: 269,
   },
   {
+    slug: 'sweet-making',
+    name: 'Sweet Making',
+    category: 'COOKING',
+    description: 'Traditional homemade sweets — Gajar ka Halwa, ladoos, barfi and festive specials, prepared fresh and hygienically in your kitchen.',
+    imageUrl: '/img/sweets.jpg',
+    basePrice: 199,
+    hourlyRate: 249,
+  },
+  {
     slug: 'full-home-cleaning',
     name: 'Full Home Package',
     category: 'CLEANING',

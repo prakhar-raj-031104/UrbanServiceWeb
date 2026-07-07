@@ -1,9 +1,9 @@
 // Billing engine — Ms Help Hub pricing (Shimoga):
 //   · ₹<hourlyRate>/hr (cleaning: ₹239/hr), minimum 1 hour billed
 //   · Jobs longer than 3 hours: FLAT ₹599 (one person)
-//   · First-ever booking promo: first hour costs ₹149
+//   · First-ever booking promo: first hour costs ₹199
 export const FLAT_ABOVE_3H = 599;
-export const FIRST_BOOKING_FIRST_HOUR = 149;
+export const FIRST_BOOKING_FIRST_HOUR = 199;
 
 export function computeBill({ hourlyRate, startedAt, completedAt, isFirstBooking = false }) {
   if (!startedAt || !completedAt) return { cost: null, durationMins: null };

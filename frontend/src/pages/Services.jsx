@@ -66,7 +66,7 @@ export default function Services() {
       <div className="page__hero page__hero--dark">
         <div className="container">
           <span className="eyebrow">Our Services</span>
-          <div className="promobanner">🎉 First booking — 1 hour at just <b>₹149</b></div>
+          <div className="promobanner">🎉 First booking — 1 hour at just <b>₹199</b></div>
           <h1 className="page__title">Find the right help<br />for your home</h1>
           <p className="section-sub">₹239/hr with a verified professional · jobs over 3 hours cost a flat ₹599 (one person).</p>
 
@@ -91,69 +91,33 @@ export default function Services() {
         </div>
       </div>
 
-      {/* ── scroll showcase: cards left, sticky detail right ── */}
+      {/* ── simple service cards grid ── */}
       {services.length > 0 && (
-        <div className="container svcshow">
-          <div className="svcshow__list" ref={listRef}>
-            {services.map((s, i) => (
-              <article
-                key={s.id}
-                data-idx={i}
-                className={`svcshow__card ${i === active ? 'is-active' : ''}`}
-                onClick={() => setBooking(s)}
-              >
-                <img src={s.imageUrl} alt={s.name} loading="lazy" />
-                <div className="svcshow__card-overlay">
-                  <span className="svcshow__card-cat">{s.category}</span>
-                  <h3>{s.name}</h3>
+        <div className="container section" style={{ paddingTop: 44 }}>
+          <div className="svcgrid">
+            {services.map((s) => (
+              <article className="svccard card card--hover" key={s.id}>
+                <div className="svccard__img shine">
+                  <img src={s.imageUrl} alt={s.name} loading="lazy" />
+                  <span className={`avail svccard__avail ${s.available ? 'ok' : 'no'}`}>
+                    <span className={`dot ${s.available ? 'on' : 'off'}`} />
+                    {s.available ? 'Available' : 'Busy'}
+                  </span>
                 </div>
-                {/* mobile-only inline info */}
-                <div className="svcshow__card-mobile">
+                <div className="svccard__body">
+                  <span className="bigcard__cat">{s.category}</span>
+                  <h3>{s.name}</h3>
                   <p>{s.description}</p>
-                  <div className="svcshow__card-mrow">
-                    <b>₹{s.hourlyRate}/hr <small>· 3 hrs+ ₹599</small></b>
-                    <button className="btn btn-blue btn-sm" onClick={(e) => { e.stopPropagation(); setBooking(s); }}>Request →</button>
+                  <div className="svccard__facts">
+                    <span><b>₹{s.hourlyRate}</b>/hr</span>
+                    <span>3 hrs+ <b>₹599</b></span>
+                    <span><b>{s.availableStaffCount}/{s.staffCount}</b> pros</span>
                   </div>
+                  <button className="btn btn-blue svccard__btn" onClick={() => setBooking(s)}>Request this service →</button>
                 </div>
               </article>
             ))}
           </div>
-
-          <aside className="svcshow__sticky">
-            {current && (
-              <div className="svcshow__panel card" ref={panelRef} key={current.id}>
-                <div className="svcshow__panel-top">
-                  <span className="bigcard__cat">{current.category}</span>
-                  <span className={`avail ${current.available ? 'ok' : 'no'}`}>
-                    <span className={`dot ${current.available ? 'on' : 'off'}`} />
-                    {current.available ? 'Available now' : 'Fully booked'}
-                  </span>
-                </div>
-                <h2>{current.name}</h2>
-                <p className="svcshow__desc">{current.description}</p>
-
-                <div className="svcshow__facts">
-                  <div><span>Per hour</span><b>₹{current.hourlyRate}</b></div>
-                  <div><span>3 hrs+ flat</span><b>₹599</b></div>
-                  <div><span>Professionals</span><b>{current.availableStaffCount}/{current.staffCount}</b></div>
-                </div>
-
-                <div className="svcshow__staff">
-                  <div className="avatars">
-                    {current.staff.slice(0, 4).map((st) => (
-                      <img key={st.id} src={st.photoUrl} alt={st.name} title={`${st.name} · ${st.rating}★`} />
-                    ))}
-                  </div>
-                  <span className="muted">Verified & background-checked</span>
-                </div>
-
-                <button className="btn btn-blue svcshow__book" onClick={() => setBooking(current)}>
-                  Request this service <span>→</span>
-                </button>
-                <p className="svcshow__count">{String(active + 1).padStart(2, '0')} / {String(services.length).padStart(2, '0')}</p>
-              </div>
-            )}
-          </aside>
         </div>
       )}
 

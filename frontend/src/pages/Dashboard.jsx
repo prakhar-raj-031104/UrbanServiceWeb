@@ -142,7 +142,7 @@ function WelcomeBoard({ name }) {
           </p>
           <div className="welcome__cta">
             <button className="btn btn-blue" onClick={() => nav('/services')}>Make your first request <span>→</span></button>
-            <span className="welcome__offer">🎁 First booking · 1 hour at just <b>₹149</b></span>
+            <span className="welcome__offer">🎁 First booking · 1 hour at just <b>₹199</b></span>
           </div>
         </div>
       </div>

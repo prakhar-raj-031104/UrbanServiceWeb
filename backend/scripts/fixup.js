@@ -17,6 +17,17 @@ async function main() {
     data: { hourlyRate: 239 },
   });
   if (p2.count) console.log(`[fixup] cleaning rate set to 239/hr (${p2.count})`);
+
+  // Sweet Making service (Gajar ka Halwa & more)
+  await prisma.service.upsert({
+    where: { slug: 'sweet-making' },
+    update: {},
+    create: {
+      slug: 'sweet-making', name: 'Sweet Making', category: 'COOKING',
+      description: 'Traditional homemade sweets — Gajar ka Halwa, ladoos, barfi and festive specials, prepared fresh and hygienically in your kitchen.',
+      imageUrl: '/img/sweets.jpg', basePrice: 199, hourlyRate: 249,
+    },
+  });
 }
 
 main()
