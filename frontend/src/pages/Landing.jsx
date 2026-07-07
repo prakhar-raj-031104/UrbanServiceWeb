@@ -95,23 +95,12 @@ export default function Landing() {
           scrollTrigger: { trigger: el, start: 'top 88%' } });
       });
 
-      // Showcase: pinned horizontal scroll — cards glide right→left, scrubbed
-      // to the user's vertical scroll (with a smooth 1.2s catch-up).
-      const track = trackRef.current;
-      if (track && track.children.length > 1) {
-        const amount = () => Math.max(0, track.scrollWidth - window.innerWidth + 80);
-        gsap.to(track, {
-          x: () => -amount(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#showcase',
-            start: 'top top',
-            end: () => `+=${amount()}`,
-            scrub: 1.2,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
+      // Showcase cards: slide in from the right as the section enters
+      const cards = gsap.utils.toArray('.showcase__track > *');
+      if (cards.length) {
+        gsap.from(cards, {
+          x: 160, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: 0.12,
+          scrollTrigger: { trigger: '#showcase', start: 'top 80%' },
         });
       }
 
@@ -247,10 +236,13 @@ export default function Landing() {
             <span className="eyebrow">All services</span>
             <h2 className="section-title split--scroll"><Split text="Pick yours." /></h2>
           </div>
-          <span className="showcase__hint">Keep scrolling ⟶</span>
+          <div className="showcase__nav">
+            <button aria-label="Previous services" onClick={() => trackRef.current?.scrollBy({ left: -450, behavior: 'smooth' })}>←</button>
+            <button aria-label="Next services" onClick={() => trackRef.current?.scrollBy({ left: 450, behavior: 'smooth' })}>→</button>
+          </div>
         </div>
-        <div className="showcase__viewport">
-          <div className="showcase__track" ref={trackRef}>
+        <div className="showcase__viewport" ref={trackRef}>
+          <div className="showcase__track">
             {services.map((s) => (
               <article className="bigcard shine" key={s.id} onClick={() => nav('/services')}>
                 <div className="bigcard__img" style={{ backgroundImage: `url(${s.imageUrl})` }}>

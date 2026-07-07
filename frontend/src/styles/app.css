@@ -125,15 +125,21 @@
 .hero__dots button.on { background: #fff; width: 40px; }
 @media (max-width: 900px) { .hero__grid { grid-template-columns: 1fr; } .hero__panel { display: none; } }
 
-/* ══════════════ SHOWCASE (pinned horizontal scrub) ══════════════ */
-.showcase { background: var(--bg); overflow: hidden; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 90px 0 60px; }
-.showcase__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 48px; flex-wrap: wrap; max-width: var(--maxw); margin-left: auto; margin-right: auto; width: 100%; }
-.showcase__viewport { overflow: hidden; padding: 10px 0 20px; }
-.showcase__track {
-  display: flex; gap: 24px; width: max-content;
-  padding: 0 max(24px, calc((100vw - var(--maxw)) / 2 + 24px));
-  will-change: transform;
+/* ══════════════ SHOWCASE (arrow slider) ══════════════ */
+.showcase { background: var(--bg); overflow: hidden; padding: 100px 0; }
+.showcase__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 44px; flex-wrap: wrap; max-width: var(--maxw); margin-left: auto; margin-right: auto; width: 100%; }
+.showcase__nav { display: flex; gap: 10px; }
+.showcase__nav button { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 18px; color: var(--ink); transition: all .35s var(--ease); }
+.showcase__nav button:hover { background: linear-gradient(110deg, var(--blue), #6d28d9); border-color: transparent; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(47,75,255,.5); }
+.showcase__viewport {
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: 10px 0 24px;
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
 }
+.showcase__viewport::-webkit-scrollbar { display: none; }
+.showcase__track { display: flex; gap: 24px; width: max-content; padding: 0 max(24px, calc((100vw - var(--maxw)) / 2 + 24px)); }
+.showcase__track > * { scroll-snap-align: start; }
 .showcase__hint { color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: .04em; }
 .bigcard { width: 400px; flex-shrink: 0; background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); cursor: pointer; transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .3s; }
 .bigcard:hover { transform: translateY(-6px); border-color: #cdd6ff; box-shadow: var(--shadow); }
