@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useAuth } from '../lib/auth.jsx';
 
@@ -156,7 +156,7 @@ export default function Auth() {
           {mode === 'signup' && (
             <label className="tickrow tickrow--center">
               <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
-              <span>I agree to the terms and conditions</span>
+              <span>I agree to the <Link to="/terms" target="_blank" className="tickrow__link">terms and conditions</Link></span>
             </label>
           )}
 

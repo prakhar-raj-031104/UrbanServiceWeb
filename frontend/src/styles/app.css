@@ -773,6 +773,14 @@
 .welcome__step-arrow { color: #c9cfe2; font-size: 18px; margin-left: auto; padding: 0 6px; }
 .welcome__step:last-child .welcome__step-arrow { display: none; }
 
+/* terms page */
+.terms { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.terms__item { display: flex; gap: 20px; padding: 26px 30px; }
+.terms__num { font-family: var(--font-head); font-weight: 800; color: var(--blue); font-size: 20px; flex-shrink: 0; }
+.terms__item h3 { font-size: 17px; margin-bottom: 7px; }
+.terms__item p { color: var(--slate); font-size: 14.5px; line-height: 1.7; }
+.tickrow__link { color: var(--blue-600); font-weight: 600; text-decoration: underline; }
+
 /* terms tick */
 .tickrow { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--slate); cursor: pointer; user-select: none; }
 .tickrow input { width: 17px; height: 17px; accent-color: var(--blue); cursor: pointer; flex-shrink: 0; }

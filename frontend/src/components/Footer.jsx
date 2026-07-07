@@ -24,6 +24,7 @@ export default function Footer() {
           <Link to="/">About</Link>
           <Link to="/track">Track Request</Link>
           <Link to="/admin">Admin Panel</Link>
+          <Link to="/terms">Terms & Conditions</Link>
         </div>
         <div className="footer__col">
           <h4>Contact</h4>
@@ -31,7 +32,7 @@ export default function Footer() {
           <span>+91 80954 66795</span>
           <span>+91 96066 07818</span>
           <span>Kushinagar Prabhas Apartment, opposite Shimoga 577201</span>
-          <span>Open 7 days · 8am–9pm</span>
+          <span>Open 7 days · 9am–7pm</span>
         </div>
       </div>
       <div className="container footer__bottom">

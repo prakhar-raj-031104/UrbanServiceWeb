@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { api } from '../lib/api.js';
@@ -451,7 +451,7 @@ export default function Landing() {
                 <input placeholder="Notes (optional)" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
                 <label className="tickrow tickrow--dark">
                   <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
-                  <span>I agree to the terms and conditions</span>
+                  <span>I agree to the <Link to="/terms" target="_blank" className="tickrow__link">terms and conditions</Link></span>
                 </label>
                 {formState.error && <div className="bookend__error">{formState.error}</div>}
                 <button className="btn btn-white bookend__submit" disabled={formState.sending || !agree}>

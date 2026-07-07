@@ -95,7 +95,7 @@ export default function RequestModal({ service, onClose }) {
 
               <label className="tickrow">
                 <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
-                <span>I agree to the terms and conditions</span>
+                <span>I agree to the <Link to="/terms" target="_blank" className="tickrow__link">terms and conditions</Link></span>
               </label>
 
               {error && <div className="form__error">{error}</div>}
