@@ -24,6 +24,7 @@ export default function Footer() {
           <Link to="/">About</Link>
           <Link to="/track">Track Request</Link>
           <Link to="/admin">Admin Panel</Link>
+          <Link to="/contact">Contact Us</Link>
           <Link to="/terms">Terms & Conditions</Link>
         </div>
         <div className="footer__col">

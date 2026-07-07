@@ -22,6 +22,7 @@ import Admin from './pages/Admin.jsx';
 import Auth from './pages/Auth.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Terms from './pages/Terms.jsx';
+import Contact from './pages/Contact.jsx';
 import { AuthProvider } from './lib/auth.jsx';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
         <Footer />

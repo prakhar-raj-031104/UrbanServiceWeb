@@ -37,6 +37,7 @@ export default function Navbar() {
           {user
             ? <Link to="/dashboard" className={pathname === '/dashboard' ? 'active' : ''}>My Requests</Link>
             : <Link to="/track" className={pathname === '/track' ? 'active' : ''}>Track</Link>}
+          <Link to="/contact" className={pathname === '/contact' ? 'active' : ''}>Contact</Link>
           <Link to="/admin" className={pathname === '/admin' ? 'active' : ''}>Admin</Link>
         </nav>
         <div className="nav__right">
